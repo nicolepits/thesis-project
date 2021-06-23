@@ -8,6 +8,8 @@ const {User} = require('./models/user')
 const {Measures} = require('./models/user')
 app.port = 3000;
 
+/* static path (css images etc) */
+app.use(express.static('static'))
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -142,14 +144,43 @@ app.put('/user/update/risk',user.updateUserRisk); //update risk only
 app.put('/user/update/personal', user.updateUserPersonal); //update height,weight etc only
 app.delete('/user/delete', user.deleteUser); //delete user data
 
+// HTML views.
+
+app.get('/risk', function(req, res){
+  res.render('risk');
+});
+app.post('/risk', function(req, res){
+  res.render('risk');
+});
+app.get('/risk-result', function(req, res){
+  res.render('risk-result');
+});
+
+app.get('/', function(req, res){
+  res.render('welcome-page');
+});
+
+app.get('/personalized-rec', function(req, res){
+  res.render('personalized-rec');
+});
+app.get('/result-rec', function(req, res){
+  res.render('result-rec');
+});
+app.get('/account-info', restrict, function(req, res){
+  res.locals.username = req.session.user.credentials.username;
+  res.render('account-info');
+});
+
 console.log('Server started on port ' + app.port)
 
 //==================================================/
 
+/*
 app.get('/', function(req, res){
   res.redirect('/login');
 
 });
+*/
 
 // dummy database
 

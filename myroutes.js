@@ -55,9 +55,14 @@ exports.createUser = function(req, res){
 
 //Return user by id
 exports.userById = function(req,res){
+    console.log("userById", req.query.username);
     return User.findOne({"credentials.username": req.query.username}, function (err, user) {
         if(!err) {
+            if (user) {
             return res.send(user);
+            } else {
+                return res.status(404).send({error: "User not found."});
+            }
         } else {
             return res.send(err);
         }
