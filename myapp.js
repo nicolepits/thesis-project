@@ -124,7 +124,8 @@ app.post('/login', function(req, res){
         req.session.success = 'Authenticated as ' + user.credentials.username
           + ' click to <a href="/logout">logout</a>. '
           + ' You may now access <a href="/restricted">/restricted</a>.';
-        res.redirect('back');
+//        res.redirect('back');
+          res.redirect('/');
       });
     } else {
       req.session.error = 'Authentication failed, please check your '
@@ -155,6 +156,159 @@ app.post('/risk', function(req, res){
 app.get('/risk-result', function(req, res){
   res.render('risk-result');
 });
+function getAge(date){
+    var dob = new Date(date);
+    //calculate month difference from current date in time
+    var month_diff = Date.now() - dob.getTime();
+    //convert the calculated difference in date format
+    var age_dt = new Date(month_diff);
+    //extract year from date
+    var year = age_dt.getUTCFullYear();
+    //now calculate the age of the user
+    var age = Math.abs(year - 1970);
+    return age;
+}
+
+app.post('/risk-result', function(req, res){
+    console.log(req.body);
+    //collect form data
+    var gender = req.body.gender;
+    var birthDate = req.body.birthdate;
+    var height = req.body.height;
+    var weight = req.body.weight;
+    var waist = req.body.waist;
+    var screen = req.body.screen;
+    var breakfasts = req.body.breakfasts;
+    var sugary = req.body.sugary;
+    var alcohol = req.body.alcohol;
+    var walking = req.body.walking;
+    var physical = req.body.physical;
+    var legumes = req.body.legumes;
+
+    height= height*0.01; //convert cm to m
+
+    //calculate BMI
+    var BMI = weight/(height*height)
+    console.log(BMI)
+    //evaluate
+    var irPoints = 0;
+    var htnPoints = 0;
+
+    if(BMI<25){
+        //nothing
+    } else if(BMI<=30){
+        irPoints+=9;
+        htnPoints+=10;
+    } else {
+        irPoints+=19;
+        htnPoints+=20;
+    }
+
+    if(gender=="female"){
+        if(waist<80){
+            //nothing
+        } else if(waist<=88){
+            irPoints+=3;
+        } else{
+            irPoints+=7;
+        }
+    } else { //gender:male
+        irPoints+=2;
+        htnPoints+=6;
+        if(waist<94){
+            //nothing
+        } else if(waist<=102){
+            irPoints+=3;
+        } else{
+            irPoints+=7;
+        }
+    }
+
+    if(screen>=2){
+        irPoints+=3;
+    }
+
+    if(breakfasts<5){
+        irPoints+=3;
+    }
+
+    if(sugary>=1){
+        irPoints+=2;
+    }
+
+    if(walking==0){
+        irPoints+=2;
+    }
+
+    if(physical==0){
+        irPoints+=2;
+        htnPoints+=2;
+    }
+
+    if(getAge(birthDate)>=40){
+        htnPoints+=2;
+    }
+
+    if(alcohol>=3){
+        htnPoints+=2;
+    }
+
+    if(legumes<1){
+        htnPoints+=8;
+    }
+
+    console.log(irPoints);
+    console.log(htnPoints);
+
+    //store in database
+
+    var data = [{
+        type: "height",
+        metric: "cm",
+        value: height,
+    },
+        {
+            type: "weight",
+            metric: "kg",
+            value: weight,
+        },
+        {
+            type: "ir_risk",
+            metric: "",
+            value: irPoints,
+        },
+        {
+            type: "htn_risk",
+            metric: "",
+            value: htnPoints,
+        },
+
+    ];
+    console.log(data);
+    var measurements = data.map(el => new Measures({
+        type: el.type,
+        metric: el.metric,
+        value: el.value,
+    }));
+
+    if (req.session.user) {
+        var username = res.locals.username = req.session.user.credentials.username;
+        User.updateOne({"credentials.username": username}, {$push: {measurement: measurements}}, function(err) {
+            if (!err) {
+                //return res.send({});
+            } else {
+                console.log(err);
+                //return res.send(404, { error: "Person was not updated."});
+                return fn(new Error('cannot find user'));
+            }
+        });
+    } else {
+        req.session.error = 'You are not logged in.';
+    }
+
+    res.render('risk-result');
+});
+
 
 app.get('/', function(req, res){
   res.render('welcome-page');

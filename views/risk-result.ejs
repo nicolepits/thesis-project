@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Diabetes type 2 risk assessment menu</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <script src="./js/main.js"></script>
+
+</head>
+<body>
+<div id="colorlib-page">
+    <a href="#" class="js-colorlib-nav-toggle colorlib-nav-toggle"><i></i></a>
+    <aside id="colorlib-aside" role="complementary" class="js-fullheight">
+        <nav id="colorlib-main-menu" role="navigation">
+            <ul>
+                <li ><a href="/">Home</a></li>
+                <li class="colorlib-active"><a href="/risk">Risk assessment</a></li>
+                <li><a href="/personalized-rec">Personalized Tools</a></li>
+                <li><a href="#">Specialists</a></li>
+                <li><a href="/account-info">My Account</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <div id="colorlib-main">
+        <section class="ftco-section pt-4 mb-5 ftco-intro">
+            <div class="container-fluid px-3 px-md-0">
+                <h3>Results</h3>
+                <hr>
+                <%- message %>
+                <form>
+                    <div class="alert alert-danger">
+                        <strong>High HTN risk!</strong>Your score is above normal (limit = 26/40).
+                    </div> <br>
+                    <div class="alert alert-success">
+                        <strong>Low I.R. risk!</strong>Your score is considered normal.
+                    </div> <br>
+                    <input type="button" id="comparison" value="Compare with previous scores">
+                </form>
+            </div>
+        </section>
+    </div>
+</div>
+</section>
+
+</body>
+</html>
+

@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Diabetes type 2 risk assessment menu</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <script src="./js/main.js"></script>
+
+</head>
+<body>
+<div id="colorlib-page">
+    <a href="#" class="js-colorlib-nav-toggle colorlib-nav-toggle"><i></i></a>
+    <aside id="colorlib-aside" role="complementary" class="js-fullheight">
+        <nav id="colorlib-main-menu" role="navigation">
+            <ul>
+                <li ><a href="/">Home</a></li>
+                <li class="colorlib-active">Risk assessment</li>
+                <li><a href="/personalized-rec">Personalized Tools</a></li>
+                <li><a href="#">Specialists</a></li>
+                <li><a href="/account-info">My Account</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <div id="colorlib-main">
+        <section class="ftco-section pt-4 mb-5 ftco-intro">
+            <div class="container-fluid px-3 px-md-0">
+                <h3>Type 2 Diabetes (T2D) and Hypertension (HTN) risk estimator</h3>
+                <hr>
+                <b>Please enter the information mentioned below.</b>
+                <form class="form-block" id="risk-form" action="/risk-result" method="POST">
+                    <!-- SEX -->
+                    <label>Sex:&ensp; </label>
+                    <input type="radio" id="male" name="gender" value="male" required>
+                    Male
+                    <input type="radio" id="female" name="gender" value="female" required checked>
+                    Female
+                    <br><br>
+                    <label for="birth">Date of birth:</label>
+                    <input type="date" id="birth" name="birthdate" value=""><br><br>
+
+                    <label for="height">Height (in cm):</label>
+                    <input type="text" id="height" name="height"><br><br>
+
+                    <label for="weight">Weight (in kgs):</label>
+                    <input type="text" id="weight" name="weight"><br><br>
+                    <!-- WAIST CIRCUMFERENCE -->
+                    <label for="waist">Waist Circumference (in cm):</label>
+                    <input type="text" id="waist" name="waist"><br><br>
+                    <!-- LEISURE SCREEN TIME -->
+                    <label for="screen">Leisure screen time (hours per day):</label>
+                    <input type="text" id="screen" name="screen"><br><br>
+                    <!-- BREAKFAST -->
+                    <label for="breakfast">Number of breakfasts per week:</label>
+                    <input type="text" id="breakfast" name="breakfasts"><br><br>
+                    <!-- SUGARY PORTIONS -->
+                    <label for="sugary">Sugary portions per week: (1 portion = 250ml)</label>
+                    <input type="text" id="sugary" name="sugary"></br
+                    <br><br>
+                    <!-- ALCOHOL CONSUMPTION -->
+                    <label for="alcohol">Alcohol consumption per week: (1 portion = 125 mL of wine, 330 mL
+                        of beer or 40mL of hard liquor)</label>
+                    <input type="text" id="alcohol" name="alcohol"></br>
+                    <br><br>
+                    <!-- WALKING -->
+                    <p>Walking 3 times per week (around 30min each):</p>
+                    <input type="radio" id="walkTrue" name="walking" value="1" required>
+                    <label for="walkTrue">Yes</label><br>
+                    <input type="radio" id="walkFalse" name="walking" value="0" required checked>
+                    <label for="walkFalse">No</label><br><br>
+                    <!-- WALKING -->
+                    <p>Vigorous physical activity 3 times per week (around 10min each):</p>
+                    <input type="radio" id="physTrue" name="physical" value="1">
+                    <label for="physTrue">Yes</label><br>
+                    <input type="radio" id="physFalse" name="physical" value="0">
+                    <label for="physFalse">No</label><br><br>
+                    <!-- LEGUMES -->
+                    <label for="waist">Legumes per week (in cups):</label>
+                    <input type="text" id="legume" name="legumes"><br><br>
+
+                    <input type="submit" name="calculate" id="calc" value="Calculate"/>
+                </form>
+            </div>
+        </section>
+    </div>
+</div>
+</section>
+
+</body>
+</html>
