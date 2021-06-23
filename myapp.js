@@ -306,6 +306,15 @@ app.post('/risk-result', function(req, res){
         req.session.error = 'You are not logged in.';
     }
 
+  res.locals.htn = {
+      "class": "danger",
+      "score": htnPoints.toString(),
+  }
+  res.locals.ir = {
+      "class": "success",
+      "score": irPoints.toString(),
+  }
+    console.log(res.locals);
     res.render('risk-result');
 });
 

@@ -32,15 +32,17 @@
     <div id="colorlib-main">
         <section class="ftco-section pt-4 mb-5 ftco-intro">
             <div class="container-fluid px-3 px-md-0">
-                <h3>Results</h3>
+                <h1>Results</h1>
                 <hr>
                 <%- message %>
                 <form>
-                    <div class="alert alert-danger">
-                        <strong>High HTN risk!</strong>Your score is above normal (limit = 26/40).
+                    <h2>Hypertension</h2>
+                    <div class="alert alert-<%- htn.class %>">
+                        <strong>High HTN risk!</strong>Your score is above normal <%- htn.score %> (limit = 26/40).
                     </div> <br>
-                    <div class="alert alert-success">
-                        <strong>Low I.R. risk!</strong>Your score is considered normal.
+                    <h2>Insulin resistance</h2>
+                    <div class="alert alert-<%- ir.class %>">
+                        <strong>Low I.R. risk!</strong>Your score is considered normal. <%- ir.score %>
                     </div> <br>
                     <input type="button" id="comparison" value="Compare with previous scores">
                 </form>
