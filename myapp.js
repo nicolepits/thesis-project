@@ -4,8 +4,12 @@ var cors = require('cors');
 var session = require('express-session');
 var hash = require('pbkdf2-password')()
 var path = require('path');
-const {User} = require('./models/user')
-const {Measures} = require('./models/user')
+const {
+    User
+} = require('./models/user')
+const {
+    Measures
+} = require('./models/user')
 app.port = 3000;
 
 /* static path (css images etc) */
@@ -15,7 +19,9 @@ app.set('views', path.join(__dirname, 'views'));
 
 // middleware
 //
-app.use(express.urlencoded({ extended: false }))
+app.use(express.urlencoded({
+    extended: false
+}))
 
 //Routes
 var user = require('./myroutes');
@@ -24,9 +30,9 @@ var user = require('./myroutes');
 app.use(cors());
 
 app.use(session({
-	  resave: false, // don't save session if unmodified
-	  saveUninitialized: false, // don't create session until something stored
-	  secret: 'yeuh'
+    resave: false, // don't save session if unmodified
+    saveUninitialized: false, // don't create session until something stored
+    secret: 'yeuh'
 }));
 
 //Node Config
@@ -38,32 +44,46 @@ app.listen(app.port);
 
 /**** ENDPOINTS ****/
 
-app.use(function(req, res, next){
-  var err = req.session.error;
-  var msg = req.session.success;
-  delete req.session.error;
-  delete req.session.success;
-  res.locals.message = '';
-  if (err) res.locals.message = '<p class="msg error">' + err + '</p>';
-  if (msg) res.locals.message = '<p class="msg success">' + msg + '</p>';
-  next();
+app.use(function (req, res, next) {
+    var err = req.session.error;
+    var msg = req.session.success;
+    var status_msg = req.session.status_msg;
+    delete req.session.error;
+    delete req.session.success;
+    delete req.session.status_msg;
+    res.locals.message = '';
+    res.locals.status_msg = '';
+console.dir(status_msg);
+    if (err) res.locals.message = '<p class="msg error">' + err + '</p>';
+    if (msg) res.locals.message = '<p class="msg success">' + msg + '</p>';
+    if (status_msg) res.locals.status_msg = status_msg;
+console.dir(res.locals);
+    if (req.session.user) {
+	req.session.status_msg = 'You are logged in as '+req.session.user.credentials.username;
+    } else {
+	req.session.status_msg= 'You are not logged in';
+    }
+console.dir(req.session);
+    next();
 });
 
 
 // Authenticate using our plain-object database of doom!
 
 function authenticate(username, pass, fn) {
-  if (!module.parent) console.log('authenticating %s:%s', username, pass);
-//  var user = users[name];
-  // query the db for the given username
- // if (!user) return fn(new Error('cannot find user'));
-  // apply the same algorithm to the POSTed password, applying
-  // the hash against the pass / salt, if there is a match we
-  // found the user
+    if (!module.parent) console.log('authenticating %s:%s', username, pass);
+    //  var user = users[name];
+    // query the db for the given username
+    // if (!user) return fn(new Error('cannot find user'));
+    // apply the same algorithm to the POSTed password, applying
+    // the hash against the pass / salt, if there is a match we
+    // found the user
 
 
 
-    User.findOne({"credentials.username":username}, function(err,user){
+    User.findOne({
+        "credentials.username": username
+    }, function (err, user) {
         if (err) {
             console.log(err);
             //return res.send(404, { error: "User could not be found."});
@@ -86,54 +106,54 @@ function authenticate(username, pass, fn) {
 }
 
 function restrict(req, res, next) {
-  if (req.session.user) {
-    next();
-  } else {
-    req.session.error = 'Access denied!';
-    res.redirect('/login');
-  }
+    if (req.session.user) {
+        next();
+    } else {
+        req.session.error = 'Access denied!';
+        res.redirect('/login');
+    }
 }
 
-app.get('/restricted', restrict, function(req, res){
-      res.send('Wahoo! restricted area, click to <a href="/logout">logout</a>');
+app.get('/restricted', restrict, function (req, res) {
+    res.send('Wahoo! restricted area, click to <a href="/logout">logout</a>');
 });
 
 
-app.get('/logout', function(req, res){
-  // destroy the user's session to log them out
-  // will be re-created next request
-  req.session.destroy(function(){
-    res.redirect('/');
-  });
+app.get('/logout', function (req, res) {
+    // destroy the user's session to log them out
+    // will be re-created next request
+    req.session.destroy(function () {
+        res.redirect('/');
+    });
 });
 
-app.get('/login', function(req, res){
-  res.render('login');
+app.get('/login', function (req, res) {
+    res.render('login');
 });
 
-app.post('/login', function(req, res){
-  authenticate(req.body.username, req.body.password, function(err, user){
-    if (user) {
-      // Regenerate session when signing in
-      // to prevent fixation
-      req.session.regenerate(function(){
-        // Store the user's primary key
-        // in the session store to be retrieved,
-        // or in this case the entire user object
-        req.session.user = user;
-        req.session.success = 'Authenticated as ' + user.credentials.username
-          + ' click to <a href="/logout">logout</a>. '
-          + ' You may now access <a href="/restricted">/restricted</a>.';
-//        res.redirect('back');
-          res.redirect('/');
-      });
-    } else {
-      req.session.error = 'Authentication failed, please check your '
-        + ' username and password.'
-        + ' (use "tj" and "foobar")';
-      res.redirect('/login');
-    }
-  });
+app.post('/login', function (req, res) {
+    authenticate(req.body.username, req.body.password, function (err, user) {
+        if (user) {
+            // Regenerate session when signing in
+            // to prevent fixation
+            req.session.regenerate(function () {
+                // Store the user's primary key
+                // in the session store to be retrieved,
+                // or in this case the entire user object
+                req.session.user = user;
+                req.session.success = 'Authenticated as ' + user.credentials.username +
+                    ' click to <a href="/logout">logout</a>. ' +
+                    ' You may now access <a href="/restricted">/restricted</a>.';
+                //        res.redirect('back');
+                res.redirect('/');
+            });
+        } else {
+            req.session.error = 'Authentication failed, please check your ' +
+                ' username and password.' +
+                ' (use "tj" and "foobar")';
+            res.redirect('/login');
+        }
+    });
 });
 
 //users
@@ -141,22 +161,23 @@ app.get('/users', user.allUsers); //retrieves all users
 app.get('/user', user.userById); //retrieves user by username
 app.post('/user/add', user.createUser); //creates a user (signup)
 app.put('/user/update/measurement', user.updateMeasurement); //update measurements
-app.put('/user/update/risk',user.updateUserRisk); //update risk only
+app.put('/user/update/risk', user.updateUserRisk); //update risk only
 app.put('/user/update/personal', user.updateUserPersonal); //update height,weight etc only
 app.delete('/user/delete', user.deleteUser); //delete user data
 
 // HTML views.
 
-app.get('/risk', function(req, res){
-  res.render('risk');
+app.get('/risk', function (req, res) {
+    res.render('risk');
 });
-app.post('/risk', function(req, res){
-  res.render('risk');
+app.post('/risk', function (req, res) {
+    res.render('risk');
 });
-app.get('/risk-result', function(req, res){
-  res.render('risk-result');
+app.get('/risk-result', function (req, res) {
+    res.render('risk-result');
 });
-function getAge(date){
+
+function getAge(date) {
     var dob = new Date(date);
     //calculate month difference from current date in time
     var month_diff = Date.now() - dob.getTime();
@@ -169,7 +190,7 @@ function getAge(date){
     return age;
 }
 
-function calculateRisks(data){
+function calculateRisks(data) {
     var gender = data.gender;
     var birthDate = data.birthdate;
     var height = data.height;
@@ -183,74 +204,74 @@ function calculateRisks(data){
     var physical = data.physical;
     var legumes = data.legumes;
 
-    height= height*0.01; //convert cm to m
+    height = height * 0.01; //convert cm to m
     //calculate BMI
-    var BMI = weight/(height*height)
+    var BMI = weight / (height * height)
     //evaluate
     var irPoints = 0;
     var htnPoints = 0;
 
-    if(BMI<25){
+    if (BMI < 25) {
         //nothing
-    } else if(BMI<=30){
-        irPoints+=9;
-        htnPoints+=10;
+    } else if (BMI <= 30) {
+        irPoints += 9;
+        htnPoints += 10;
     } else {
-        irPoints+=19;
-        htnPoints+=20;
+        irPoints += 19;
+        htnPoints += 20;
     }
 
-    if(gender=="female"){
-        if(waist<80){
+    if (gender == "female") {
+        if (waist < 80) {
             //nothing
-        } else if(waist<=88){
-            irPoints+=3;
-        } else{
-            irPoints+=7;
+        } else if (waist <= 88) {
+            irPoints += 3;
+        } else {
+            irPoints += 7;
         }
     } else { //gender:male
-        irPoints+=2;
-        htnPoints+=6;
-        if(waist<94){
+        irPoints += 2;
+        htnPoints += 6;
+        if (waist < 94) {
             //nothing
-        } else if(waist<=102){
-            irPoints+=3;
-        } else{
-            irPoints+=7;
+        } else if (waist <= 102) {
+            irPoints += 3;
+        } else {
+            irPoints += 7;
         }
     }
 
-    if(screen>=2){
-        irPoints+=3;
+    if (screen >= 2) {
+        irPoints += 3;
     }
 
-    if(breakfasts<5){
-        irPoints+=3;
+    if (breakfasts < 5) {
+        irPoints += 3;
     }
 
-    if(sugary>=1){
-        irPoints+=2;
+    if (sugary >= 1) {
+        irPoints += 2;
     }
 
-    if(walking==0){
-        irPoints+=2;
+    if (walking == 0) {
+        irPoints += 2;
     }
 
-    if(physical==0){
-        irPoints+=2;
-        htnPoints+=2;
+    if (physical == 0) {
+        irPoints += 2;
+        htnPoints += 2;
     }
 
-    if(getAge(birthDate)>=40){
-        htnPoints+=2;
+    if (getAge(birthDate) >= 40) {
+        htnPoints += 2;
     }
 
-    if(alcohol>=3){
-        htnPoints+=2;
+    if (alcohol >= 3) {
+        htnPoints += 2;
     }
 
-    if(legumes<1){
-        htnPoints+=8;
+    if (legumes < 1) {
+        htnPoints += 8;
     }
 
     return [htnPoints, irPoints];
@@ -260,7 +281,7 @@ function testCalculateRisks() {
     function make_data(
         birthDate,
         gender,
-        height ,
+        height,
         weight,
         waist,
         screen,
@@ -271,24 +292,24 @@ function testCalculateRisks() {
         physical,
         legumes) {
         return {
-            birthDate:birthDate,
-            height : height,
-            weight:weight,
-            gender:gender,
-            waist:waist,
-            screen:screen,
-            breakfasts:breakfasts,
-            sugary:sugary,
-            alcohol:alcohol,
-            walking:walking,
-            physical:physical,
+            birthDate: birthDate,
+            height: height,
+            weight: weight,
+            gender: gender,
+            waist: waist,
+            screen: screen,
+            breakfasts: breakfasts,
+            sugary: sugary,
+            alcohol: alcohol,
+            walking: walking,
+            physical: physical,
         }
     }
     var data = [
-        make_data("1990-01-01","female", 150, 150, 150, 5, 2, 2, 50, 1, 0,0),
-        make_data("1990-01-01","male", 150, 150, 150, 5, 2, 2, 50, 1, 0,0),
+        make_data("1990-01-01", "female", 150, 150, 150, 5, 2, 2, 50, 1, 0, 0),
+        make_data("1990-01-01", "male", 150, 150, 150, 5, 2, 2, 50, 1, 0, 0),
     ];
-    var expected_results = [ 0,0];
+    var expected_results = [0, 0];
 
     data.forEach(body => {
         console.dir(body);
@@ -298,7 +319,7 @@ function testCalculateRisks() {
     });
 }
 
-app.post('/risk-result', function(req, res){
+app.post('/risk-result', function (req, res) {
     console.log(req.body);
     //collect form data
     var gender = req.body.gender;
@@ -314,23 +335,23 @@ app.post('/risk-result', function(req, res){
     var physical = req.body.physical;
     var legumes = req.body.legumes;
 
-    height= height*0.01; //convert cm to m
+    height = height * 0.01; //convert cm to m
     testCalculateRisks();
     var [htnPoints, irPoints] = calculateRisks(req.body);
 
     /* HTN: >=26 risk
      * IR:  30>=high risk>=23 , >=31 very high risk
      */
-//    console.log(irPoints);
-//    console.log(htnPoints);
+    //    console.log(irPoints);
+    //    console.log(htnPoints);
 
     //store in database
 
     var data = [{
-        type: "height",
-        metric: "cm",
-        value: height,
-    },
+            type: "height",
+            metric: "cm",
+            value: height,
+        },
         {
             type: "weight",
             metric: "kg",
@@ -348,7 +369,7 @@ app.post('/risk-result', function(req, res){
         },
 
     ];
-//    console.log(data);
+    //    console.log(data);
     var measurements = data.map(el => new Measures({
         type: el.type,
         metric: el.metric,
@@ -357,7 +378,13 @@ app.post('/risk-result', function(req, res){
 
     if (req.session.user) {
         var username = res.locals.username = req.session.user.credentials.username;
-        User.updateOne({"credentials.username": username}, {$push: {measurement: measurements}}, function(err) {
+        User.updateOne({
+            "credentials.username": username
+        }, {
+            $push: {
+                measurement: measurements
+            }
+        }, function (err) {
             if (!err) {
                 //return res.send({});
             } else {
@@ -376,21 +403,21 @@ app.post('/risk-result', function(req, res){
     const HTN_RISK = "indicates risk";
     const HTN_NORM = "is considered normal";
 
-  res.locals.htn = {
-      "class": "success",
-      "message": HTN_NORM,
-      "score": htnPoints.toString(),
-  }
-    if (htnPoints>=26) {
+    res.locals.htn = {
+        "class": "success",
+        "message": HTN_NORM,
+        "score": htnPoints.toString(),
+    }
+    if (htnPoints >= 26) {
         res.locals.htn.class = "warn";
         res.locals.htn.message = HTN_RISK;
     }
-  res.locals.ir = {
-      "class": "success",
-      "message":IR_NORM,
-      "score": irPoints.toString(),
-  }
-    if (irPoints>=23 && irPoints <=30) {
+    res.locals.ir = {
+        "class": "success",
+        "message": IR_NORM,
+        "score": irPoints.toString(),
+    }
+    if (irPoints >= 23 && irPoints <= 30) {
         res.locals.htn.class = "warn"
         res.locals.htn.message = IR_RISK;
     } else if (irPoints >= 31) {
@@ -398,24 +425,25 @@ app.post('/risk-result', function(req, res){
     }
 
 
-//    console.log(res.locals);
+    console.log("locals");
+    console.dir(res.locals);
     res.render('risk-result');
 });
 
 
-app.get('/', function(req, res){
-  res.render('welcome-page');
+app.get('/', function (req, res) {
+    res.render('welcome-page');
 });
 
-app.get('/personalized-rec', function(req, res){
-  res.render('personalized-rec');
+app.get('/personalized-rec', function (req, res) {
+    res.render('personalized-rec');
 });
-app.get('/result-rec', function(req, res){
-  res.render('result-rec');
+app.get('/result-rec', function (req, res) {
+    res.render('result-rec');
 });
-app.get('/account-info', restrict, function(req, res){
-  res.locals.username = req.session.user.credentials.username;
-  res.render('account-info');
+app.get('/account-info', restrict, function (req, res) {
+    res.locals.username = req.session.user.credentials.username;
+    res.render('account-info');
 });
 
 console.log('Server started on port ' + app.port)
@@ -448,4 +476,4 @@ hash({ password: 'foobar' }, function (err, pass, salt, hash) {
 */
 
 /*
-*/
+ */
