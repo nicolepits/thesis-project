@@ -38,11 +38,11 @@
                 <form>
                     <h2>Hypertension</h2>
                     <div class="alert alert-<%- htn.class %>">
-                        <strong>High HTN risk!</strong>Your score is above normal <%- htn.score %> (limit = 26/40).
+                        <strong>Your score <%-htn.message%>.</strong> <%- htn.score %> (limit = 26/40).
                     </div> <br>
                     <h2>Insulin resistance</h2>
                     <div class="alert alert-<%- ir.class %>">
-                        <strong>Low I.R. risk!</strong>Your score is considered normal. <%- ir.score %>
+                        <strong>Your score <%-ir.message%>.</strong> <%- ir.score %>
                     </div> <br>
                     <input type="button" id="comparison" value="Compare with previous scores">
                 </form>

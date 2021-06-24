@@ -169,27 +169,23 @@ function getAge(date){
     return age;
 }
 
-app.post('/risk-result', function(req, res){
-    console.log(req.body);
-    //collect form data
-    var gender = req.body.gender;
-    var birthDate = req.body.birthdate;
-    var height = req.body.height;
-    var weight = req.body.weight;
-    var waist = req.body.waist;
-    var screen = req.body.screen;
-    var breakfasts = req.body.breakfasts;
-    var sugary = req.body.sugary;
-    var alcohol = req.body.alcohol;
-    var walking = req.body.walking;
-    var physical = req.body.physical;
-    var legumes = req.body.legumes;
+function calculateRisks(data){
+    var gender = data.gender;
+    var birthDate = data.birthdate;
+    var height = data.height;
+    var weight = data.weight;
+    var waist = data.waist;
+    var screen = data.screen;
+    var breakfasts = data.breakfasts;
+    var sugary = data.sugary;
+    var alcohol = data.alcohol;
+    var walking = data.walking;
+    var physical = data.physical;
+    var legumes = data.legumes;
 
     height= height*0.01; //convert cm to m
-
     //calculate BMI
     var BMI = weight/(height*height)
-    console.log(BMI)
     //evaluate
     var irPoints = 0;
     var htnPoints = 0;
@@ -257,8 +253,76 @@ app.post('/risk-result', function(req, res){
         htnPoints+=8;
     }
 
-    console.log(irPoints);
-    console.log(htnPoints);
+    return [htnPoints, irPoints];
+}
+
+function testCalculateRisks() {
+    function make_data(
+        birthDate,
+        gender,
+        height ,
+        weight,
+        waist,
+        screen,
+        breakfasts,
+        sugary,
+        alcohol,
+        walking,
+        physical,
+        legumes) {
+        return {
+            birthDate:birthDate,
+            height : height,
+            weight:weight,
+            gender:gender,
+            waist:waist,
+            screen:screen,
+            breakfasts:breakfasts,
+            sugary:sugary,
+            alcohol:alcohol,
+            walking:walking,
+            physical:physical,
+        }
+    }
+    var data = [
+        make_data("1990-01-01","female", 150, 150, 150, 5, 2, 2, 50, 1, 0,0),
+        make_data("1990-01-01","male", 150, 150, 150, 5, 2, 2, 50, 1, 0,0),
+    ];
+    var expected_results = [ 0,0];
+
+    data.forEach(body => {
+        console.dir(body);
+        var [htnPoints, irPoints] = calculateRisks(body);
+        console.log("htnPoints", htnPoints);
+        console.log("irPoints", irPoints);
+    });
+}
+
+app.post('/risk-result', function(req, res){
+    console.log(req.body);
+    //collect form data
+    var gender = req.body.gender;
+    var birthDate = req.body.birthdate;
+    var height = req.body.height;
+    var weight = req.body.weight;
+    var waist = req.body.waist;
+    var screen = req.body.screen;
+    var breakfasts = req.body.breakfasts;
+    var sugary = req.body.sugary;
+    var alcohol = req.body.alcohol;
+    var walking = req.body.walking;
+    var physical = req.body.physical;
+    var legumes = req.body.legumes;
+
+    height= height*0.01; //convert cm to m
+    testCalculateRisks();
+    var [htnPoints, irPoints] = calculateRisks(req.body);
+
+    /* HTN: >=26 risk
+     * IR:  30>=high risk>=23 , >=31 very high risk
+     */
+//    console.log(irPoints);
+//    console.log(htnPoints);
 
     //store in database
 
@@ -284,7 +348,7 @@ app.post('/risk-result', function(req, res){
         },
 
     ];
-    console.log(data);
+//    console.log(data);
     var measurements = data.map(el => new Measures({
         type: el.type,
         metric: el.metric,
@@ -306,15 +370,35 @@ app.post('/risk-result', function(req, res){
         req.session.error = 'You are not logged in.';
     }
 
+    const IR_RISK = "is above normal";
+    const IR_VRISK = "indicates very high risk";
+    const IR_NORM = "is considered normal";
+    const HTN_RISK = "indicates risk";
+    const HTN_NORM = "is considered normal";
+
   res.locals.htn = {
-      "class": "danger",
+      "class": "success",
+      "message": HTN_NORM,
       "score": htnPoints.toString(),
   }
+    if (htnPoints>=26) {
+        res.locals.htn.class = "warn";
+        res.locals.htn.message = HTN_RISK;
+    }
   res.locals.ir = {
       "class": "success",
+      "message":IR_NORM,
       "score": irPoints.toString(),
   }
-    console.log(res.locals);
+    if (irPoints>=23 && irPoints <=30) {
+        res.locals.htn.class = "warn"
+        res.locals.htn.message = IR_RISK;
+    } else if (irPoints >= 31) {
+        res.locals.htn.message = IR_VRISK;
+    }
+
+
+//    console.log(res.locals);
     res.render('risk-result');
 });
 
