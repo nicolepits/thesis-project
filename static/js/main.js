@@ -157,7 +157,7 @@ function calculateRisk(event){
 	event.preventDefault();
 
     //collect form data
- 	var sex = document.querySelector('input[name="gender"]:checked').value
+ 	var sex = document.querySelector('input[name="sex"]:checked').value
 	var birthDate = document.getElementById("risk-form").elements[2].value;
 	var height = document.getElementById("risk-form").elements[3].value;
 	var weight = document.getElementById("risk-form").elements[4].value;

@@ -209,7 +209,7 @@ function getAge(date) {
 }
 
 function calculateRisks(data) {
-    var gender = data.gender;
+    var sex = data.sex;
     var birthDate = data.birthdate;
     var height = data.height;
     var weight = data.weight;
@@ -239,7 +239,7 @@ function calculateRisks(data) {
         htnPoints += 20;
     }
 
-    if (gender == "female") {
+    if (sex == "female") {
         if (waist < 80) {
             //nothing
         } else if (waist <= 88) {
@@ -247,7 +247,7 @@ function calculateRisks(data) {
         } else {
             irPoints += 7;
         }
-    } else { //gender:male
+    } else { //sex:male
         irPoints += 2;
         htnPoints += 6;
         if (waist < 94) {
@@ -298,7 +298,7 @@ function calculateRisks(data) {
 function testCalculateRisks() {
     function make_data(
         birthDate,
-        gender,
+        sex,
         height,
         weight,
         waist,
@@ -313,7 +313,7 @@ function testCalculateRisks() {
             birthDate: birthDate,
             height: height,
             weight: weight,
-            gender: gender,
+            sex: sex,
             waist: waist,
             screen: screen,
             breakfasts: breakfasts,
@@ -337,7 +337,7 @@ function testCalculateRisks() {
 
 app.post('/risk-result', async function (req, res) {
     //collect form data
-    var gender = req.body.gender;
+    var sex = req.body.sex;
     var birthDate = req.body.birthdate;
     var height = req.body.height;
     var weight = req.body.weight;
