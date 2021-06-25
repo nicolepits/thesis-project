@@ -41,6 +41,24 @@ app.use(express.json());
 //Start the server on port 3000
 app.listen(app.port);
 
+function recentType(a,type){  //a:array type:string
+    if (a.length == 0) {
+        return null;
+    }
+    var result = {type: "", metric: "", timestamp: 0};
+
+    for(i=0;i<a.length;i++){
+         if(a[i].type == type){
+            tmp2 = new Date(result.timestamp);
+            let tmp1 = new Date(a[i].timestamp);
+            if(tmp1.getTime() > tmp2.getTime()){
+                result = a[i];
+            }
+        }
+    }
+    return result;
+}
+
 
 /**** ENDPOINTS ****/
 
@@ -314,13 +332,10 @@ function testCalculateRisks() {
     data.forEach(body => {
         console.dir(body);
         var [htnPoints, irPoints] = calculateRisks(body);
-        console.log("htnPoints", htnPoints);
-        console.log("irPoints", irPoints);
     });
 }
 
-app.post('/risk-result', function (req, res) {
-    console.log(req.body);
+app.post('/risk-result', async function (req, res) {
     //collect form data
     var gender = req.body.gender;
     var birthDate = req.body.birthdate;
@@ -376,6 +391,7 @@ app.post('/risk-result', function (req, res) {
         value: el.value,
     }));
 
+    var prev_values = null;
     if (req.session.user) {
         var username = res.locals.username = req.session.user.credentials.username;
         User.updateOne({
@@ -393,8 +409,44 @@ app.post('/risk-result', function (req, res) {
                 return fn(new Error('cannot find user'));
             }
         });
+        await User.findOne({"credentials.username": username}, function (err, user) {
+                if(!err) {
+                prev_values = user.measurement;
+                } else {
+                console.log(err);
+                //return res.send(404, { error: "Person was not updated."});
+                return fn(new Error('cannot find user'));
+                }
+                });
     } else {
         req.session.error = 'You are not logged in.';
+    }
+    res.locals.history="";
+    if (prev_values) {
+        var output = "<table class=\"table table-bordered\"><thead><tr><th>date</th><th>type</th><th>value</th></tr></thead><tbody>";
+    
+        var previous_ir_risk = recentType(prev_values, "ir_risk");
+        var previous_htn_risk = recentType(prev_values, "htn_risk");
+        if(previous_ir_risk) {
+            var val = previous_ir_risk;
+            output += "<tr><td>"+val.timestamp.toLocaleString()+"</td><td>"+val.type+"</td><td>"+val.value+"</td></tr>";
+        }
+        if(previous_htn_risk) {
+            var val = previous_htn_risk;
+            output += "<tr><td>"+val.timestamp.toLocaleString()+"</td><td>"+val.type+"</td><td>"+val.value+"</td></tr>";
+        }
+        /*
+        prev_values.forEach(val => {
+            if (val.type != "ir_risk" && val.type != "htn_risk") {
+                return;
+            }
+            output += "<tr><td>"+val.timestamp+"</td><td>"+val.type+"</td><td>"+val.value+"</td></tr>";
+            return;
+        });
+        */
+
+        output += "</tbody></table>";
+        res.locals.history=output;
     }
 
     const IR_RISK = "is above normal";
@@ -425,8 +477,6 @@ app.post('/risk-result', function (req, res) {
     }
 
 
-    console.log("locals");
-    console.dir(res.locals);
     res.render('risk-result');
 });
 
@@ -441,8 +491,31 @@ app.get('/personalized-rec', function (req, res) {
 app.get('/result-rec', function (req, res) {
     res.render('result-rec');
 });
-app.get('/account-info', restrict, function (req, res) {
-    res.locals.username = req.session.user.credentials.username;
+app.get('/account-info', restrict, async function (req, res) {
+    var username = res.locals.username = req.session.user.credentials.username;
+    var prev_values = null;
+    _ = await User.findOne({"credentials.username": username}, function (err, user) {
+        if(!err) {
+            prev_values = user.measurement;
+        } else {
+            console.log(err);
+            //return res.send(404, { error: "Person was not updated."});
+            return fn(new Error('cannot find user'));
+        }
+    });
+    res.locals.history="";
+    if (prev_values) {
+        var output = "<table class=\"table table-bordered\"><thead><tr><th>date</th><th>type</th><th>value</th></tr></thead><tbody>";
+    
+        prev_values.forEach(val => {
+            output += "<tr><td>"+val.timestamp+"</td><td>"+val.type+"</td><td>"+val.value+"</td></tr>";
+            return;
+        });
+
+        output += "</tbody></table>";
+        res.locals.history=output;
+    }
+
     res.render('account-info');
 });
 

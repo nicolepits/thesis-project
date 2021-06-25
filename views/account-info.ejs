@@ -26,7 +26,7 @@
                 </li>
                 <li><a href="#">Specialists</a></li>
                 <li><a href="/account-info">My Account</a></li>
-	    <li><%- status_msg %></li>
+            <li><%- status_msg %></li>
             </ul>
         </nav>
     </aside>
@@ -40,32 +40,61 @@
                         <hr>
                         <p>Total collected data displayed below</p>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <h2 class="h4">Info: <%- username %></h2>
                         <hr>
                         <table class="table table-bordered" id="myTable">
                             <thead class="thead-dark">
-                            <tr>
-                                <th scope="col">Email</th>
-                                <th scope="col">Sex</th>
-                                <th scope="col">Ethnicity</th>
-                                <th scope="col">Birthday Date</th>
-                                <th scope="col">Height</th>
-                                <th scope="col">Weight</th>
-                                <th scope="col">IR Risk</th>
-                                <th scope="col">HTN Risk</th>
-                                <th scope="col">Weight Goal</th>
-                            </tr>
+                                <tr>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                                </tr>
+                         
                             </thead>
                             <tbody id="rows">
                             <tr>
-
+                                <th scope="col">Email</th>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th scope="col">Sex</th>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th scope="col">Ethnicity</th>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th scope="col">Birthday Date</th>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th scope="col">Height</th>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th scope="col">Weight</th>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th scope="col">IR Risk</th>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th scope="col">HTN Risk</th>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th scope="col">Weight Goal</th>
+                                <td></td>
                             </tr>
                             </tbody>
                         </table>
                         <br>
                         <a href="#">Delete all data</a><br>
                         <a href="batch-mode.html">Enter batch mode</a>
+                        <h2>Past measurements</h2>
+                        <%-history%>
                     </div>
 
 
