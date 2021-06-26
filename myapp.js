@@ -484,8 +484,20 @@ app.get('/', function (req, res) {
 app.get('/personalized-rec', function (req, res) {
     res.render('personalized-rec');
 });
-app.get('/result-rec', function (req, res) {
+app.post('/energy-expenditure', function (req, res) {
+    res.render('energy-expenditure');
+});
+app.post('/weight-loss-goal', function (req, res) {
+    res.render('weight-loss-goal');
+});
+app.post('/weight-loss-rate', function (req, res) {
+    res.render('weight-loss-rate');
+});
+app.post('/result-rec', function (req, res) {
     res.render('result-rec');
+});
+app.post('/output-result-rec', function (req, res) {
+    res.render('output-result-rec');
 });
 app.get('/account-info', restrict, async function (req, res) {
     var username = res.locals.username = req.session.user.credentials.username;
