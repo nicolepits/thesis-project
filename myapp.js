@@ -71,17 +71,14 @@ app.use(function (req, res, next) {
     delete req.session.status_msg;
     res.locals.message = '';
     res.locals.status_msg = '';
-console.dir(status_msg);
     if (err) res.locals.message = '<p class="msg error">' + err + '</p>';
     if (msg) res.locals.message = '<p class="msg success">' + msg + '</p>';
     if (status_msg) res.locals.status_msg = status_msg;
-console.dir(res.locals);
     if (req.session.user) {
 	req.session.status_msg = 'You are logged in as '+req.session.user.credentials.username;
     } else {
 	req.session.status_msg= 'You are not logged in';
     }
-console.dir(req.session);
     next();
 });
 
@@ -330,7 +327,6 @@ function testCalculateRisks() {
     var expected_results = [0, 0];
 
     data.forEach(body => {
-        console.dir(body);
         var [htnPoints, irPoints] = calculateRisks(body);
     });
 }
