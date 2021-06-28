@@ -62,6 +62,10 @@ function recentType(a,type){  //a:array type:string
 
 /**** ENDPOINTS ****/
 
+function err_to_html(err) {
+    return '<p class="msg error">' + err + '</p>';
+}
+
 app.use(function (req, res, next) {
     var err = req.session.error;
     var msg = req.session.success;
@@ -205,6 +209,13 @@ function getAge(date) {
     return age;
 }
 
+function bmi(height, weight) {
+    //calculate BMI
+    height = height / 100;
+    var BMI = weight / (height * height);
+    return BMI;
+}
+
 function calculateRisks(data) {
     var sex = data.sex;
     var birthDate = data.birthdate;
@@ -220,11 +231,10 @@ function calculateRisks(data) {
     var legumes = data.legumes;
 
     height = height * 0.01; //convert cm to m
-    //calculate BMI
-    var BMI = weight / (height * height)
     //evaluate
     var irPoints = 0;
     var htnPoints = 0;
+    var BMI = bmi(height, weight);
 
     if (BMI < 25) {
         //nothing
@@ -481,22 +491,258 @@ app.get('/', function (req, res) {
     res.render('welcome-page');
 });
 
-app.get('/personalized-rec', function (req, res) {
+
+function resetPersonalisedState(session) {
+    var state = {
+        step: 0,
+        values: {},
+    };
+
+    session.personalisedState = state;
+}
+
+app.get('/personalized-rec', async function (req, res) {
+    var initial_values =null;
+    resetPersonalisedState(req.session);
+    if (req.session.user) {
+        var username = res.locals.username = req.session.user.credentials.username;
+        _ =  await User.findOne({"credentials.username": username}, function (err, user) {
+            console.log("inner function");
+            if(!err) {
+                initial_values = {
+                    "sex": user.sex,
+                    "ethnicity": user.ethnicity,
+                    "birth": user.birth,
+                    "height": recentType(user.measurement, "height"),
+                    "weight": recentType(user.measurement, "weight"),
+                };
+            } else {
+                console.log(err);
+                //return res.send(404, { error: "Person was not updated."});
+                return fn(new Error('cannot find user'));
+            }
+        });
+    }
+    console.log("res local err msg ", req.session.personalized_error);
+    res.locals.error_msg = req.session.personalized_error;
+    req.session.personalized_error=null;
+    console.log("res local err m2sg ", res.locals.error_msg);
+    res.locals.height = null;
+    res.locals.height_date = null;
+    res.locals.weight = null;
+    res.locals.weight_date = null;
+    res.locals.sex =  null;
+    res.locals.birth =  null;
+    res.locals.ethnicity =  null;
+
+    if (initial_values) {
+        res.locals.height = initial_values.height.value;
+        res.locals.height_date = initial_values.height.timestamp.toLocaleDateString();
+        res.locals.weight = initial_values.weight.value;
+        res.locals.weight_date = initial_values.weight.timestamp.toLocaleDateString();
+        res.locals.sex = initial_values.sex;
+        // input type="date" needs an ISO string YYYY-MM-DD but toISOString() returns time as well, so get only the first 10 characters
+        res.locals.birth = initial_values.birth.toISOString().slice(0,10);
+        res.locals.ethnicity = initial_values.ethnicity;
+    }
+
+    console.log("sex",res.locals.sex);
+    console.log("birth",res.locals.birth);
+    console.log("ethn",res.locals.ethnicity);
+
     res.render('personalized-rec');
 });
 app.post('/energy-expenditure', function (req, res) {
+    res.locals.error_msg = req.session.personalized_error;
+    req.session.personalized_error=null;
+    var data = req.body;
+    console.log(req.session.personalisedState);
+    if (!req.session.personalisedState || req.session.personalisedState.step != 0) {
+        res.redirect('/personalized-rec');
+        return;
+    }
+    // Validate form data.
+    console.log(data);
+    if (data.sex != "male" && data.sex != "female") {
+        req.session.personalized_error = err_to_html('Please choose your sex and resubmit.');
+        res.redirect('/personalized-rec');
+        return;
+    }
+
+    if (data.ethnicities == "") {
+        req.session.personalized_error = err_to_html('Please choose your ethnicity and resubmit.');
+        res.redirect('/personalized-rec');
+        return;
+
+    }
+    if (isNaN(parseInt(data['user-height'], 10))) {
+req.session.personalized_error = err_to_html('Please enter a valid height number value and resubmit.');
+        res.redirect('/personalized-rec');
+        return;
+    }
+    if (isNaN(parseInt(data['user-weight'], 10))) {
+        req.session.personalized_error = err_to_html('Please enter a valid weight number value and resubmit.');
+        res.redirect('/personalized-rec');
+        return;
+    }
+
+
+    // Go to next step
+    req.session.personalisedState.step += 1;
+
+    req.session.personalisedState.values.sex = data.sex;
+    req.session.personalisedState.values.ethnicity = data.ethnicities;
+    req.session.personalisedState.values.height = data['user-height'];
+    req.session.personalisedState.values.weight = data['user-weight'];
+
     res.render('energy-expenditure');
 });
 app.post('/weight-loss-goal', function (req, res) {
+    var data = req.body;
+    res.locals.error_msg = req.session.personalized_error;
+    req.session.personalized_error=null;
+    console.log(data);
+    if (!req.session.personalisedState || req.session.personalisedState.step != 1) {
+        res.redirect('/personalized-rec');
+        return;
+    }
+
+    req.session.personalisedState.step += 1;
+
+    var state = req.session.personalisedState;
+
+    state.values.totalSleepOnWeekdays = data["weekday"];
+    state.values.totalSleepOnWeekend = data["weekend"];
+    state.values.occupations= data.occupations;
+    state.values.totalHoursOfWork = data["totalHoursOfWork"];
+    state.values.trans= data.trans == 'Yes';
+    if (state.trans) {
+        state.values['walking-effort'] = data['walking-effort']
+        state.values['cycling-effort'] = data['cycling-effort']
+        state.values['leisure-activity'] = data['leisure-activity']
+        state.values['first-act-mins'] = data['first-act-mins']
+        state.values['second-act-mins'] = data['second-act-mins']
+        state.values['house-hold-work'] = data['house-hold-work']
+        state.values['first-house-mins'] = data['first-house-mins']
+        state.values['sec-house-mins'] = data['sec-house-mins']
+    }
+    var BMI = bmi(state.values.height, state.values.weight);
+    res.locals.bmi = BMI.toFixed(1);
+    /*
+     * ethnicities:
+     *
+        americanIndian
+        alaskaNative
+        asian
+        black
+        africanAmerican
+        caucasian
+        hispanic
+        latino
+        nativeHawaiian
+        otherPacificIslander */
+    var classification = null;
+
+    var lower_body_weight_cut_off = 0;
+    var height_meters = state.values.height / 100;
+    var higher_body_weight_cut_off = 0;
+    if (["americanIndian", "alaskaNative", "black", "africanAmerican", "caucasian", "hispanic", "latino", "nativeHawaiian"].includes(state.values.ethnicity)) {
+
+        if (bmi < 18.5) {
+            classification = "Underweight";
+        } else if (bmi <= 24.9) {
+            classification = "Normal weight";
+        } else if (bmi <= 29.9) {
+            classification = "Overweight";
+        } else if (bmi <= 34.9) {
+            classification = "Obese (Class I)";
+        } else if (bmi <= 39.9) {
+            classification = "Obese (Class II)";
+        } else {
+            classification = "Obese (Class III)";
+        }
+        lower_body_weight_cut_off = (height_meters*height_meters)*20;
+        higher_body_weight_cut_off = (height_meters*height_meters)*24.9;
+    } else {
+        if (bmi < 18.5) {
+            classification = "Underweight";
+        } else if (bmi <= 22.9) {
+            classification = "Normal weight";
+        } else if (bmi <= 24.9) {
+            classification = "Overweight";
+        } else if (bmi <= 29.9) {
+            classification = "Obese (Class I)";
+        } else {
+            classification = "Obese (Class II)";
+        }
+        lower_body_weight_cut_off = (height_meters*height_meters)*18.5;
+        higher_body_weight_cut_off = (height_meters*height_meters)*22.9;
+    }
+    res.locals.lower = lower_body_weight_cut_off.toFixed(0);
+    res.locals.higher = higher_body_weight_cut_off.toFixed(0);
+
+    
+    if (BMI <35) {
+        res.locals.message = "The recommended weight loss rate is between 2-4 kg per month or 0.5-1 kg per week. Nevertheless, keep in mind that by reducing your initial body weight by 5-10% you will achieve substantial benefits in terms of health, quality of life and disease prevention";
+        res.locals.rate_min=2;
+        res.locals.rate_max=4;
+
+    } else {
+        res.locals.message = "The recommended weight loss rate is between 4-6 kg per month or 1.0-1.5 kg per week. Nevertheless, keep in mind that by reducing your initial body weight by 5-10% you will achieve substantial benefits in terms of health, quality of life and disease prevention.";
+
+        res.locals.rate_min=4;
+        res.locals.rate_max=6;
+    }
+    res.locals.weight = state.values.weight;
+
+    
+
     res.render('weight-loss-goal');
 });
 app.post('/weight-loss-rate', function (req, res) {
+    var data = req.body;
+    console.log(data);
+    res.locals.error_msg = req.session.personalized_error;
+    req.session.personalized_error=null;
+    if (!req.session.personalisedState || req.session.personalisedState.step != 2) {
+        res.redirect('/personalized-rec');
+        return;
+    }
+    req.session.personalisedState.step += 1;
+
+    req.session.personalisedState.values['weight-goal'] = data['weight-goal'];
+    req.session.personalisedState.values['weight-rate'] = data['weight-rate'];
+
     res.render('weight-loss-rate');
 });
 app.post('/result-rec', function (req, res) {
+    res.locals.error_msg = req.session.personalized_error;
+    req.session.personalized_error=null;
+    var data = req.body;
+    console.log(data);
+    if (!req.session.personalisedState || req.session.personalisedState.step != 3) {
+        res.redirect('/personalized-rec');
+        return;
+    }
+    req.session.personalisedState.step += 1;
     res.render('result-rec');
 });
 app.post('/output-result-rec', function (req, res) {
+    res.locals.error_msg = req.session.personalized_error;
+    req.session.personalized_error=null;
+    var data = req.body;
+    console.log(data);
+    if (!req.session.personalisedState || req.session.personalisedState.step != 4) {
+        res.redirect('/personalized-rec');
+        return;
+    }
+    req.session.personalisedState.step += 1;
+
+    req.session.personalisedState.values['allergies'] = data['answer'];
+    req.session.personalisedState.values['leisure-activity'] = data['leisure-activity'];
+
+    /* Reset state after it's not needed anymore. */
+    resetPersonalisedState(req.session);
     res.render('output-result-rec');
 });
 app.get('/account-info', restrict, async function (req, res) {
@@ -558,3 +804,63 @@ hash({ password: 'foobar' }, function (err, pass, salt, hash) {
 
 /*
  */
+
+
+function calcRMR(weight, height, age, sex) {
+    if (sex == 'male') {
+        return (9.99 * weight) + (6.25 * height)-(4.92*age)+5;
+    } else if (sex == 'female') {
+        return (9.99 * weight) + (6.25 * height)-(4.92*age)-161;
+    } else {
+        throw "invalid sex " + sex;
+    }
+}
+
+
+function calcEESleep(rmr, totalHoursOfSleep) {
+    return rmr * totalHoursOfSleep;
+}
+
+
+
+function calcEEWork(rmr, pal, totalHoursOfWork) {
+    return rmr * pal * totalHoursOfWork;
+}
+
+function calcEECommuting(met, weight, totalMinutes) {
+    return met * body *(totalMinutes/60.0);
+}
+
+function calcEEActivity(met, weight, totalMinutes) {
+    return calcEECommuting(met, weight, totalMinutes);
+}
+function calcEEHousehold(met, weight, totalMinutes) {
+    return calcEECommuting(met, weight, totalMinutes);
+}
+
+
+function calcWeeklyTEE(totalSleepOnWeekdays, totalSleepOnWeekend, totalHoursWork, totalMinutesCommute, totalMinutesActivity, totalMinutesHousehold, weight, height, age, sex, pal, met) {
+
+    var total =
+        (totalSleepOnWeekdays * 5 + totalSleepOnWeekend*2)+
+        totalHoursWork+
+        (totalMinutesCommute+
+        totalMinutesActivity+
+        totalMinutesHousehold)/60;
+    var rmr = calcRMR(weight, height, age, sex);
+     
+        var base= calcEESleep(rmr, totalSleepOnWeekdays) * 5
+        + calcEESleep(rmr, totalSleepOnWeekend) * 2
+        + calcEEWork(rmr, pal, totalHoursOfWork)
+        + calcEECommuting(met, weight, totalMinutesCommute)
+        + calcEEActivity(met, weight, totalMinutesActivity)
+        + calcEEHousehold(met, weight, totalMinutesHousehold);
+    
+    if (total == 168) {
+        return base;
+    } else if (total < 168) {
+        return base +((1.0*weight) * (168-total));
+    } else {
+        throw "total hours more than 168" + total;
+    }
+}

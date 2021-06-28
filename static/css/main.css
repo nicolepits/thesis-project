@@ -307,3 +307,14 @@ section.heroContainer .heroLinks {
 section.heroContainer .heroLinks h4 {
   margin-bottom: 5px;
 }
+
+p.msg {
+    outline: 5px solid black;
+    padding: 2px 5px;
+    background: #eaeaea;
+    border-radius: 5px;
+    color: black;
+}
+p.msg.error {
+    background-color: #f00;
+}

@@ -37,9 +37,9 @@
                 <form action="/weight-loss-goal" method="POST">
 
                     <label for="weekday">How many hours do you sleep on weekdays?</label>
-                    <input type="number" id="weekday" ><br><br>
+                    <input type="number" id="weekday" name="weekday" value="0" min="1" max="23"><br><br>
                     <label for="weekend">How many hours do you sleep on weekend days?</label>
-                    <input type="number" id="weekend" ><br><br>
+                    <input type="number" id="weekend" name="weekend" value="0" min="1" max="23"><br><br>
 
                     <label for="occupation">Please select one of the following occupations that best describes your current job:</label>
                     <select name="occupations" id="occupation">
@@ -86,13 +86,13 @@
                     </select>
                     <br><br>
 
-                    <label for="workHours">How many hours do you devote to your work per week?</label>
-                    <input type="number" id="workHours" ><br><br>
+                    <label for="totalHoursOfWork">How many hours do you devote to your work per week?</label>
+                    <input type="number" id="totalHoursOfWork" name="totalHoursOfWork" value="0"><br><br>
 
                     <label for="transTrue">Do you walk and/or cycle to work?</label>
                     <input type="radio" id="transTrue" name="trans" value="Yes" onchange="displayQuestions(this.value)">
                     Yes
-                    <input type="radio" id="transFalse" name="trans" value="No" onchange="displayQuestions(this.value)">
+                    <input type="radio" id="transFalse" name="trans" value="No" onchange="displayQuestions(this.value)" checked>
                     No
                     <br><br>
                     <!-- conditional input -->
@@ -114,7 +114,7 @@
                         </select>
                         <br><br>
                         <label for="hoursTravel">How much time do you spend in total, travelling to and from your work per week (in minutes)?</label>
-                        <input type="number" id="hoursTravel" ><br><br>
+                        <input type="number" id="hoursTravel"  value="0"><br><br>
                     </div>
                     <!-- end of conditional input -->
 
@@ -154,7 +154,7 @@
                         <option value="weighVig">Weigh lifting (vigorous effort)</option>
                     </select><br>
                     <label for="firstActMins">Minutes:</label>
-                    <input type="number" id="firstActMins" name="first-act-mins"><br><br>
+                    <input type="number" id="firstActMins" name="first-act-mins" value="0"><br><br>
                     <label for="sectAct">Activity 2:</label>
                     <select name="leisure-activity" id="sectAct">
                         <option value="bowling">Bowling</option>
@@ -190,7 +190,7 @@
                         <option value="weighVig">Weigh lifting (vigorous effort)</option>
                     </select><br>
                     <label for="secActMins">Minutes:</label>
-                    <input type="number" id="secActMins" name="second-act-mins"><br><br>
+                    <input type="number" id="secActMins" name="second-act-mins" value="0"><br><br>
 
                     <p>Please select the type and total duration of household activities that you do every week (Please include only activities that you do for more than 30 minutes/week):</p>
                     <label for="firstHouse">Activity 1:</label>
@@ -206,7 +206,7 @@
                         <option value="vacuum">Vacuuming</option>
                     </select><br>
                     <label for="firstHouseMins">Minutes:</label>
-                    <input type="number" id="firstHouseMins" name="first-house-mins"><br><br>
+                    <input type="number" id="firstHouseMins" name="first-house-mins" value="0"><br><br>
                     <label for="secHouse">Activity 2:</label>
                     <select name="house-hold-work" id="secHouse">
                         <option value="cooking">Cooking</option>
@@ -220,8 +220,8 @@
                         <option value="vacuum">Vacuuming</option>
                     </select><br>
                     <label for="secHouseMins">Minutes:</label>
-                    <input type="number" id="secHouseMins" name="sec-house-mins"><br><br>
-                    <input type="submit" id="submitData" name="sumbit-data" value="Next">
+                    <input type="number" id="secHouseMins" name="sec-house-mins" value="0"><br><br>
+                    <input type="submit" id="submitData" name="submit-data" value="Next">
                 </form>
             </div>
         </section>

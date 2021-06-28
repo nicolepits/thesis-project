@@ -33,20 +33,21 @@
     <div id="colorlib-main">
         <section class="ftco-section pt-4 mb-5 ftco-intro">
             <div class="container-fluid px-3 px-md-0">
+                <%- error_msg %>
                 <b>Step 3 : Weight loss goal</b>
                 <form action="/weight-loss-rate" method="POST">
                     <div class="alert alert-info">
-                        <strong>Message:</strong><br> According to the collected data your BMI is: __,_. The healthy body weight range that corresponds to your height is ____ - ____ kg.
+                        <strong>Message:</strong><br> According to the collected data your BMI is: <%- bmi %>. The healthy body weight range that corresponds to your height is <%- lower %> - <%- higher %> kg.
                     </div> <br>
                     <label for="weightGoal">What is your target body weight?</label>
-                    <input type="number" id="weightGoal" name="weight-goal"><br><br>
+                    <input type="number" id="weightGoal" name="weight-goal" min="<%- lower %>" max="<%- higher %>"><br><br>
 
                     <div class="alert alert-info">
-                        <strong>Message:</strong><br> The recommended weight loss rate is between 2-4 kg per month or 0.5-1 kg per week. Nevertheless, keep in mind that by reducing your initial body weight by 5-10% you will achieve substantial benefits in terms of health, quality of life and disease prevention.
+                        <strong>Message:</strong><br> <%- message %>
                     </div> <br>
                     <label for="weightRate">How many kilograms you wish to lose on a monthly basis?</label>
-                    <input type="number" id="weightRate" name="weight-rate"><br><br><br>
-                    <input type="submit" id="submitData" name="sumbit-data" value="Next">
+                    <input type="number" id="weightRate" name="weight-rate" min="<%- rate_min %>" max="<%- rate_max %>"><br><br><br>
+                    <input type="submit" id="submitData" name="submit-data" value="Next">
                 </form>
             </div>
         </section>
