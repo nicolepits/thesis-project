@@ -175,6 +175,38 @@ app.post('/login', function (req, res) {
     });
 });
 
+
+app.get('/signup', function (req, res) {
+    res.render('signup');
+});
+app.post('/signup', async function (req, res) {
+    var user = new User({
+        birth: new Date(),
+        ethnicity:"",
+        sex:"",
+        measurement:null,
+        credentials:{
+            username:req.body.username,
+            password:req.body.password,
+            email: req.body.email
+        }
+    });
+
+    var result = await user.save(function(err){
+        if(!err){
+            return null;
+        } else {
+            return err;
+        }
+    });
+    console.log("result=", result);
+    if (result != null) {
+        res.locals.err = result;
+        res.redirect('signup');
+    } else {
+        res.redirect('login');
+    }
+});
 //users
 app.get('/users', user.allUsers); //retrieves all users
 app.get('/user', user.userById); //retrieves user by username
@@ -182,7 +214,7 @@ app.post('/user/add', user.createUser); //creates a user (signup)
 app.put('/user/update/measurement', user.updateMeasurement); //update measurements
 app.put('/user/update/risk', user.updateUserRisk); //update risk only
 app.put('/user/update/personal', user.updateUserPersonal); //update height,weight etc only
-app.delete('/user/delete', user.deleteUser); //delete user data
+app.delete('/user/delete', user.deleteUser); //delete user
 
 // HTML views.
 
@@ -771,6 +803,48 @@ app.get('/account-info', restrict, async function (req, res) {
     }
 
     res.render('account-info');
+});
+
+app.get('/account-info/delete-data', restrict, async function (req, res) {
+    var username = res.locals.username = req.session.user.credentials.username;
+    var result = await User.findOne({"credentials.username":username}, async function(err,user){
+        if(!err){
+            user.measurement = null;
+            user.sex = "";
+            user.ethnicity = "";
+            user.birth = new Date();
+            return await user.save(function(err){
+                if(!err){
+                    return null;
+                }else{
+                    console.log(err);
+                    return err.toString();
+                }
+            });
+        } else {
+        console.log(err);
+        return err.toString();
+        }
+    });
+    if (result != null) {
+        req.session.error = result;
+    }
+    res.redirect('/account-info');
+});
+app.get('/account-info/delete-user', restrict, async function (req, res) {
+    var username = res.locals.username = req.session.user.credentials.username;
+    await User.findOne({"credentials.username": username}, async function (err, user) {
+        return user.remove(function (err){
+            if(!err){
+                console.log("removed");
+            } else{
+                return res.send(err);
+            }
+        });
+    });
+    req.session.destroy(function () {
+        res.redirect('/');
+    });
 });
 
 console.log('Server started on port ' + app.port)

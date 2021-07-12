@@ -36,7 +36,7 @@ exports.createUser = function(req, res){
         birth: new Date(),
         ethnicity:"",
         sex:"",
-        measurements:null,
+        measurement:null,
         credentials:{
             username:req.body.username,
             password:req.body.password,
