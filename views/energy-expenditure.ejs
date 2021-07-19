@@ -114,13 +114,13 @@
                         </select>
                         <br><br>
                         <label for="hoursTravel">How much time do you spend in total, travelling to and from your work per week (in minutes)?</label>
-                        <input type="number" id="hoursTravel"  value="0"><br><br>
+                        <input type="number" id="hoursTravel" name="hoursTravel"  value="0"><br><br>
                     </div>
                     <!-- end of conditional input -->
 
                     <p>Please select the type and total duration of leisure time activities and/or exercise that you do every week (Please include only activities that you do for more than 30 minutes/week):</p>
                     <label for="firstAct">Activity 1:</label>
-                    <select name="leisure-activity" id="firstAct">
+                    <select name="leisure-activity-1" id="firstAct">
                         <option value="bowling">Bowling</option>
                         <option value="archery">Archery</option>
                         <option value="billiards">Billiards</option>
@@ -136,7 +136,7 @@
                         <option value="sBallOff">Softball or baseball, officiating</option>
                         <option value="surf">Surfing</option>
                         <option value="volley">Volleyball, training</option>
-                        <option value="walkLight)">Walking 4.8-5.6k m/h (light effort)</option>
+                        <option value="walkLight">Walking 4.8-5.6k m/h (light effort)</option>
                         <option value="dog">Walking the dog</option>
                         <option value="weighLight">Weigh lifting (light-moderate effort)</option>
                         <option value="aerobic">Aerobic dancing</option>
@@ -152,11 +152,28 @@
                         <option value="swimLight">Swimming, freestyle (light-moderate effort)</option>
                         <option value="tennis">Tennis</option>
                         <option value="weighVig">Weigh lifting (vigorous effort)</option>
+                        <option value="basket">Basketball game, competitive</option>
+                        <option value="beach">Beach volleyball</option>
+                        <option value="boxing">Boxing</option>
+                        <option value="hockey">Hockey</option>
+                        <option value="netball">Netball game,competitive</option>
+                        <option value="runMod">Running, 9-11 km/h</option>
+                        <option value="skiiVig">Skiing (moderate-vigorous effort)</option>
+                        <option value="skipping">Skipping</option>
+                        <option value="volleyComp">Volleyball game, competitive</option>
+                        <option value="bicycleVig">Bicycling >22.0 km/h (vigorous effort)</option>
+                        <option value="canoeVig">Canoeing, rowing >10.0 km/h (vigorous effort)</option>
+                        <option value="rugby">Rugby</option>
+                        <option value="runVig">Running >11.0 km/h</option>
+                        <option value="soccerComp">Soccer game, competitive</option>
+                        <option value="squash">Squash</option>
+                        <option value="swimVig">Swimming, freestyle (vigorous effort)</option>
+                        <option value="polo">Water polo</option>
                     </select><br>
                     <label for="firstActMins">Minutes:</label>
                     <input type="number" id="firstActMins" name="first-act-mins" value="0"><br><br>
                     <label for="sectAct">Activity 2:</label>
-                    <select name="leisure-activity" id="sectAct">
+                    <select name="leisure-activity-2" id="sectAct">
                         <option value="bowling">Bowling</option>
                         <option value="archery">Archery</option>
                         <option value="billiards">Billiards</option>
@@ -188,17 +205,35 @@
                         <option value="swimLight">Swimming, freestyle (light-moderate effort)</option>
                         <option value="tennis">Tennis</option>
                         <option value="weighVig">Weigh lifting (vigorous effort)</option>
+                        <option value="basket">Basketball game, competitive</option>
+                        <option value="beach">Beach volleyball</option>
+                        <option value="boxing">Boxing</option>
+                        <option value="hockey">Hockey</option>
+                        <option value="netball">Netball game,competitive</option>
+                        <option value="runMod">Running, 9-11 km/h</option>
+                        <option value="skiiVig">Skiing (moderate-vigorous effort)</option>
+                        <option value="skipping">Skipping</option>
+                        <option value="volleyComp">Volleyball game, competitive</option>
+                        <option value="bicycleVig">Bicycling >22.0 km/h (vigorous effort)</option>
+                        <option value="canoeVig">Canoeing, rowing >10.0 km/h (vigorous effort)</option>
+                        <option value="rugby">Rugby</option>
+                        <option value="runVig">Running >11.0 km/h</option>
+                        <option value="soccerComp">Soccer game, competitive</option>
+                        <option value="squash">Squash</option>
+                        <option value="swimVig">Swimming, freestyle (vigorous effort)</option>
+                        <option value="polo">Water polo</option>
                     </select><br>
                     <label for="secActMins">Minutes:</label>
                     <input type="number" id="secActMins" name="second-act-mins" value="0"><br><br>
 
                     <p>Please select the type and total duration of household activities that you do every week (Please include only activities that you do for more than 30 minutes/week):</p>
                     <label for="firstHouse">Activity 1:</label>
-                    <select name="house-hold-work" id="firstHouse">
+                    <select name="house-hold-work-1" id="firstHouse">
                         <option value="cooking">Cooking</option>
                         <option value="dusting">Dusting</option>
                         <option value="ironing">Ironing</option>
                         <option value="bed">Making bed</option>
+                        <option value="washing">Washing dishes</option>
                         <option value="watering">Watering plants</option>
                         <option value="gardening">Gardening (planting, trimming,clearing land)</option>
                         <option value="mopping">Mopping</option>
@@ -208,7 +243,7 @@
                     <label for="firstHouseMins">Minutes:</label>
                     <input type="number" id="firstHouseMins" name="first-house-mins" value="0"><br><br>
                     <label for="secHouse">Activity 2:</label>
-                    <select name="house-hold-work" id="secHouse">
+                    <select name="house-hold-work-2" id="secHouse">
                         <option value="cooking">Cooking</option>
                         <option value="dusting">Dusting</option>
                         <option value="ironing">Ironing</option>
@@ -216,9 +251,7 @@
                         <option value="watering">Watering plants</option>
                         <option value="gardening">Gardening (planting, trimming,clearing land)</option>
                         <option value="mopping">Mopping</option>
-                        <option value="sweep">Sweeping floors/carpets</option>
-                        <option value="vacuum">Vacuuming</option>
-                    </select><br>
+                        <option value="sweep">Sweeping floors/carpets</option> <option value="vacuum">Vacuuming</option> </select><br>
                     <label for="secHouseMins">Minutes:</label>
                     <input type="number" id="secHouseMins" name="sec-house-mins" value="0"><br><br>
                     <input type="submit" id="submitData" name="submit-data" value="Next">

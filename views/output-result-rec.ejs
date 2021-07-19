@@ -33,27 +33,18 @@
     <div id="colorlib-main">
         <section class="ftco-section pt-4 mb-5 ftco-intro">
             <div class="container-fluid px-3 px-md-0">
-                <h3>Results</h3>
-                <hr>
-                <br>
-                <table class="table table-bordered">
-                    <thead class="thead-dark">
-                    <tr>
-                        <th scope="col">Activity</th>
-                        <th scope="col">Suggested duration</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>[activity]</td>
-                        <td>[duration]</td>
-                    </tr>
-                    </tbody>
-                </table><br><br>
-                <label for="download">Meal Plan:</label>
-                <a href="images/download-1292814_1280.png" id="download" download="hhh">
-                    <img src="images/download-1292814_1280.png" alt="DownloadIcon" width="40" height="40">
-                </a>
+            <table>
+            <tr><th>calories</th><td><%= breakfast.calories %></td></tr>
+            <tr><th>type</th><td><%= breakfast.type %></td></tr>
+            <tr><th>name</th><td><%= breakfast.name %></td></tr>
+            <tr><th>ingredients</th><td><%= breakfast.ingredients %></td></tr>
+            <tr><th>preparation</th><td><%= breakfast.preparation %></td></tr>
+            <tr><th>category</th><td><%= breakfast.category %></td></tr>
+            <tr><th>cho</th><td><%= breakfast.cho %></td></tr>
+            <tr><th>protein</th><td><%= breakfast.protein %></td></tr>
+            <tr><th>fat</th><td><%= breakfast.fat %></td></tr>
+            <tr><th>energy</th><td><%= breakfast.energy %></td></tr>
+            </table>
             </div>
         </section>
     </div>

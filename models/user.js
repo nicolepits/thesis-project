@@ -31,7 +31,37 @@ const schema = new Schema(
 
     });
 
+const meal = new Schema(
+	{
+		calories: Number,
+		type: String,
+		option: Number,
+		name: String,
+		ingredients: String,
+    preparation: String,
+    category: String,
+    cho: Number,
+    protein: Number,
+    fat:Number,
+    energy: Number
+  },
+  {
+    collection: 'meal_plans'
+  });
+
+const energy = new Schema(
+  {
+    percent: String,
+    energy_def: Number,
+    energy_exp: Number,
+    energy_in: Number
+  },
+  {
+    collection: 'energy'
+  });
 const userSchema = mongoose.model('User',schema)
 const measureSchema = mongoose.model('Measures', measurements)
 const credsSchema = mongoose.model('Creds', credential)
-module.exports = { User: userSchema, Measures: measureSchema, Creds: credsSchema}
+const mealSchema = mongoose.model('Meals', meal)
+const energySchema = mongoose.model('Energy', energy)
+module.exports = { User: userSchema, Measures: measureSchema, Creds: credsSchema, Meals: mealSchema, Energy: energySchema}
