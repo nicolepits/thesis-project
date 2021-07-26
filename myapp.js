@@ -82,6 +82,7 @@ app.use(function (req, res, next) {
 		delete req.session.status_msg;
 		res.locals.message = '';
 		res.locals.status_msg = '';
+    res.locals.months = 0;
 		if (err) res.locals.message = '<p class="msg error">' + err + '</p>';
 		if (msg) res.locals.message = '<p class="msg success">' + msg + '</p>';
 		if (status_msg) res.locals.status_msg = status_msg;
@@ -185,31 +186,31 @@ app.post('/login', function (req, res) {
 /** TEST **/
 
 app.get('/helper',function (req, res){
-  res.render('helper');
-});
+    res.render('helper');
+    });
 
 app.post('/helper',async function (req,res){
-  var meal = new Meals({
-    calories: req.body.calories,
-    type: req.body.type,
-    option: req.body.option,
-    name: req.body.name,
-    ingredients: req.body.ingredients,
-    preparation: req.body.preparation,
-    category: req.body.category,
-    cho: req.body.cho,
-    protein: req.body.protein,
-    fat: req.body.fat,
-    energy: req.body.energy
-  });
-  var result = await meal.save(function(err){
+    var meal = new Meals({
+calories: req.body.calories,
+type: req.body.type,
+option: req.body.option,
+name: req.body.name,
+ingredients: req.body.ingredients,
+preparation: req.body.preparation,
+category: req.body.category,
+cho: req.body.cho,
+protein: req.body.protein,
+fat: req.body.fat,
+energy: req.body.energy
+});
+    var result = await meal.save(function(err){
 			if(!err){
 			return null;
 			} else {
 			return err;
 			}
 			});
-		console.log("result=", result);
+console.log("result=", result);
 if (result != null) {
 	res.locals.err = result;
 	console.log("meal inserted")
@@ -219,17 +220,17 @@ if (result != null) {
 });
 
 app.get('/helper-energy',function (req, res){
-  res.render('helper-energy');
-});
+    res.render('helper-energy');
+    });
 
 app.post('/helper-energy',async function (req,res){
-  var energy = new Energy({
-    percent: req.body.percent,
-    energy_def: req.body.ener_def,
-    energy_exp: req.body.ener_exp,
-    energy_in: req.body.ener_in
-  });
-  var result = await energy.save(function(err){
+    var energy = new Energy({
+percent: req.body.percent,
+energy_def: req.body.ener_def,
+energy_exp: req.body.ener_exp,
+energy_in: req.body.ener_in
+});
+    var result = await energy.save(function(err){
 			if(!err){
 			return null;
 			} else {
@@ -237,12 +238,12 @@ app.post('/helper-energy',async function (req,res){
 			}
 			});
 		console.log("result=", result);
-if (result != null) {
-	res.locals.err = result;
-	console.log("energies inserted")
-} else {
-	res.redirect('helper-energy');
-}
+    if (result != null) {
+	  res.locals.err = result;
+	  console.log("energies inserted")
+    } else {
+	  res.redirect('helper-energy');
+    }
 });
 
 
@@ -422,16 +423,16 @@ function testCalculateRisks() {
 			legumes) {
 		return {
 birthDate: birthDate,
-	   height: height,
-	   weight: weight,
-	   sex: sex,
-	   waist: waist,
-	   screen: screen,
-	   breakfasts: breakfasts,
-	   sugary: sugary,
-	   alcohol: alcohol,
-	   walking: walking,
-	   physical: physical,
+	         height: height,
+	         weight: weight,
+	         sex: sex,
+	         waist: waist,
+	         screen: screen,
+	         breakfasts: breakfasts,
+	         sugary: sugary,
+	         alcohol: alcohol,
+	         walking: walking,
+	         physical: physical,
 		}
 	}
 	var data = [
@@ -693,16 +694,12 @@ app.post('/energy-expenditure', function (req, res) {
 		// Go to next step
 		req.session.personalisedState.step += 1;
 
-    //calculate RMR
-    var rmr = calcRMR(data['user-weight'],data['user-height'],getAge(data.birth),data.sex);
-
     //pass values to session state
 		req.session.personalisedState.values.sex = data.sex;
 		req.session.personalisedState.values.ethnicity = data.ethnicities;
 		req.session.personalisedState.values.birth = data.birth;
-		req.session.personalisedState.values.height = data['user-height'];
-		req.session.personalisedState.values.weight = data['user-weight']; 
-		req.session.personalisedState.values.rmr = rmr;
+		req.session.personalisedState.values.height = parseInt(data['user-height']);
+		req.session.personalisedState.values.weight = parseInt(data['user-weight']); 
 
 		res.render('energy-expenditure');
 });
@@ -720,24 +717,29 @@ app.post('/weight-loss-goal', function (req, res) {
 
 		var state = req.session.personalisedState;
 
-		state.values.totalSleepOnWeekdays = data["weekday"];
-		state.values.totalSleepOnWeekend = data["weekend"];
+		state.values.totalSleepOnWeekdays = parseInt(data["weekday"]);
+		state.values.totalSleepOnWeekend = parseInt(data["weekend"]);
 		state.values.occupations= data.occupations;
-		state.values.totalHoursOfWork = data["totalHoursOfWork"];
+		state.values.totalHoursOfWork = parseInt(data["totalHoursOfWork"]);
 		state.values.trans= data.trans == 'Yes';
 		if (state.values.trans) {
 		state.values['walking-effort'] = data['walking-effort'];
-			state.values['cycling-effort'] = data['cycling-effort'];
-			state.values['hoursTravel'] = data['hoursTravel'];
-		}
-			state.values['leisure-activity-1'] = data['leisure-activity-1'];
-			state.values['leisure-activity-2'] = data['leisure-activity-2'];
-			state.values['first-act-mins'] = data['first-act-mins'];
-			state.values['second-act-mins'] = data['second-act-mins'];
-			state.values['house-hold-work-1'] = data['house-hold-work-1']; 
-			state.values['house-hold-work-2'] = data['house-hold-work-2'];
-			state.values['first-house-mins'] = data['first-house-mins'];
-			state.values['sec-house-mins'] = data['sec-house-mins'];
+		state.values['cycling-effort'] = data['cycling-effort'];
+		state.values['hoursTravel'] = parseInt(data['hoursTravel']);
+		} else {
+    state.values['walking-effort'] = "none";
+		state.values['cycling-effort'] = "none";
+		state.values['hoursTravel'] = 0;
+
+    }
+		state.values['leisure-activity-1'] = data['leisure-activity-1'];
+		state.values['leisure-activity-2'] = data['leisure-activity-2'];
+		state.values['first-act-mins'] = parseInt(data['first-act-mins']);
+		state.values['second-act-mins'] = parseInt(data['second-act-mins']);
+		state.values['house-hold-work-1'] = data['house-hold-work-1']; 
+		state.values['house-hold-work-2'] = data['house-hold-work-2'];
+		state.values['first-house-mins'] = parseInt(data['first-house-mins']);
+		state.values['sec-house-mins'] = parseInt(data['sec-house-mins']);
 		var BMI = bmi(state.values.height, state.values.weight);
 		res.locals.bmi = BMI.toFixed(1);
 		/*
@@ -807,9 +809,6 @@ app.post('/weight-loss-goal', function (req, res) {
 		}
 		res.locals.weight = state.values.weight;
 
-    //Estimate Energy Expenditures
-    //var EESleep = calcEESleep(state.values.rmr,data. 
-
 		res.render('weight-loss-goal');
 });
 app.post('/weight-loss-rate', function (req, res) {
@@ -823,11 +822,17 @@ app.post('/weight-loss-rate', function (req, res) {
 		}
 		req.session.personalisedState.step += 1;
 
-		req.session.personalisedState.values['weight-goal'] = data['weight-goal'];
-		req.session.personalisedState.values['weight-rate'] = data['weight-rate'];
+		req.session.personalisedState.values['weight-goal'] = parseInt(data['weight-goal']);
+		req.session.personalisedState.values['weight-rate'] = parseInt(data['weight-rate']);
+
+    //calculate number of months needed to reach goal
+    var diff = req.session.personalisedState.values.weight-req.session.personalisedState.values['weight-goal'];
+    var rate = req.session.personalisedState.values['weight-rate'];
+    res.locals.months = diff/rate;
+
 
 		res.render('weight-loss-rate');
-		});
+});
 app.post('/result-rec', function (req, res) {
 		res.locals.error_msg = req.session.personalized_error;
 		req.session.personalized_error=null;
@@ -838,8 +843,8 @@ app.post('/result-rec', function (req, res) {
 		return;
 		}
 		req.session.personalisedState.step += 1;
-
-    req.session.personalisedState.values['percentage'] = data['percentage'];
+    //store percentage
+    req.session.personalisedState.values['percentage'] = parseInt(data['percentage']);
 
 		res.render('result-rec');
 		});
@@ -848,86 +853,280 @@ app.post('/meal-plans', async function (req, res) {
 		res.locals.error_msg = req.session.personalized_error;
 		req.session.personalized_error=null;
 		var data = req.body;
-		console.log(data);
-		if (!req.session.personalisedState || req.session.personalisedState.step != 4) {
+		console.log(data); if (!req.session.personalisedState || req.session.personalisedState.step != 4) {
 		res.redirect('/personalized-rec');
 		return;
 		}
 		req.session.personalisedState.step += 1;
+    var state = req.session.personalisedState;
 
-		req.session.personalisedState.values['allergies'] = data['answer'];
+    state.values.answer= data.answer == 'Yes';
+    if(state.values.answer){
+    state.values.allergy = data.allergies;
+    } else {
+    state.values.allergy = null;
+    }
+
 		req.session.personalisedState.values['leisure-activity'] = data['leisure-activity'];
     var user = req.session.personalisedState;
 
-    //Estimate RMR
-    var rmr = calcRMR(user.values.weight,user.values.height,getAge(user.values.birth),user.values.sex);
+    var weight = user.values.weight;
+    var height = user.values.height;
+    var totalSleepOnWeekdays = user.values.totalSleepOnWeekdays;
+    var totalSleepOnWeekend = user.values.totalSleepOnWeekend;
+    var totalHoursOfWork = user.values.totalHoursOfWork;
+    var hoursTravel = user.values['hoursTravel'];
+    var firstActMins = user.values['first-act-mins'];
+    var secondActMins = user.values['second-act-mins'];
+    var firstHouseMins = user.values['first-house-mins'];
+    var secondHouseMins = user.values['sec-house-mins'];
+    var weightRate = user.values['weight-rate'];
 
+    //Estimate RMR
+    var rmr = calcRMR(weight,height,getAge(user.values.birth),user.values.sex);
+    console.log("RMR= ",rmr);
     //Estimate PAL
     var pal = calcPAL(user.values.occupations,user.values.sex);
-
+    console.log("PAL= ",pal);
     //Estimate MET
     var metCom = calcMETCom(user.values['walking-effort'],user.values['cycling-effort']);
     var metFirstAct = calcMETActiv(user.values['leisure-activity-1']);
     var metSecondAct = calcMETActiv(user.values['leisure-activity-2']);
     var metFirstHouse = calcMETHouse(user.values['house-hold-work-1']);
     var metSecondHouse = calcMETHouse(user.values['house-hold-work-2']);
+    console.log("metCOM= ",metCom);
+    console.log("metFirstAct= ",metFirstAct);
+    console.log("metSecondAct= ",metSecondAct);
+    console.log("metFirstHouse= ",metFirstHouse);
+    console.log("metSecondHouse= ",metSecondHouse);
 
-    /*****
-    //Estimate Energy Expenditures
-    var totalHoursOfSleep = user.values.totalSleepOnWeekdays + user.values.totalSleepOnWeekend;
-    var EESleep = calcEESleep(rmr,totalHoursOfSleep);
-    var EECom = calcEECommuting(metCom, user.values.weight, user.values['hoursTravel']);
-    var EEFirstAct = calcEEActivity(metFirstAct, user.values.weight, user.values['first-act-mins']);
-    var EESecondAct = calcEEActivity(metSecondAct, user.values.weight, user.values['second-act-mins']);
-    var EEFirstHouse =  calcEEHousehold(metFirstHouse, user.values.weight, user.values['first-house-mins']);
-    var EESecondHouse =  calcEEHousehold(metSecondHouse, user.values.weight, user.values['sec-house-mins']);
-    ***/ 
-    
     //Estimate Total Energy Expenditure
-    var tee = calcWeeklyTEE(user.values.totalSleepOnWeekdays,user.values.totalSleepOnWeekend,user.values.totalHoursOfWork, user.values['hoursTravel'], user.values['first-act-mins'],user.values['second-act-mins'],user.values['first-house-mins'], user.values['sec-house-mins'],rmr,pal, metCom, metFirstAct,metSecondAct,metFirstHouse,metSecondHouse);
 
-    //store TEE to state values
-    user.values.tee = tee;
+    var tee = calcWeeklyTEE(weight,totalSleepOnWeekdays,totalSleepOnWeekend,
+        totalHoursOfWork,hoursTravel,firstActMins,secondActMins,
+        firstHouseMins,secondHouseMins,rmr,pal, metCom,
+        metFirstAct,metSecondAct,metFirstHouse,metSecondHouse);
+    console.log("TEE",tee);
+    //store mean TEE to state values (daily tee)
+    user.values.tee = tee/7;
 
     //Estimate energy deficit from weight goal
-    var deficit = calcEnergyDeficit(user.values['weight-rate']);
+    var deficit = calcEnergyDeficit(weightRate);
 
-		/* Reset state after it's not needed anymore. */
-		resetPersonalisedState(req.session);
-
-    res.locals.breakfasts = await Meals.find({type:"breakfast"}, function (err, ret) {
-      if (!err) {
+    //Calculate EE(Energy Expenditure) and EI(Energy Intake) needed for weight loss using the percentage and cal deficit
+    var stringPercentage = getStringPercentage(user.values['percentage']);
+    var energy = await Energy.findOne({percent: stringPercentage,energy_def: deficit},function (err, ret) {
+        if (!err) {
         return ret;
-      } else {
-        console.log("could not find breakfasts", err);
+        } else {
+        console.log("could not find energy", err);
         return err;
+        }
+        });
+
+    //store EE and EI
+    user.values['energy_exp'] = energy['energy_exp'];
+    user.values['energy_in'] = energy['energy_in'];
+
+    console.log("energy expenditure= ",energy['energy_exp']);
+    console.log("energy intake= ",energy['energy_in']);
+
+    //calculate user's calories for weight loss
+    var userCal = user.values.tee - energy['energy_in'];
+    var mealPlanCal = getMealPlanCalories(userCal);
+
+    console.log("Meal plan calories= ",mealPlanCal);
+
+    if(user.values.allergy == null){
+      res.locals.breakfasts = await Meals.find({calories:mealPlanCal,type:"breakfast"}, function (err, ret) {
+          if (!err) {
+          return ret;
+          } else {
+          console.log("could not find breakfasts", err);
+          return err;
+          }
+          });
+      res.locals.lunches = await Meals.find({calories:mealPlanCal,type:"lunch"}, function (err, ret) {
+          if (!err) {
+          return ret;
+          } else {
+          console.log("could not find lunches", err);
+          return err;
+          }
+          });
+      res.locals.dinners = await Meals.find({calories:mealPlanCal,type:"dinner"}, function (err, ret) {
+          if (!err) {
+          return ret;
+          } else {
+          console.log("could not find dinner", err);
+          return err;
+          }
+          });
+      res.locals.teas = await Meals.find({calories:mealPlanCal,type:"tea"}, function (err, ret) {
+          if (!err) {
+          return ret;
+          } else {
+          console.log("could not find tea", err);
+          return err;
+          }
+          });
+    } else { //user has an allergy
+      var breakfasts = await Meals.find({calories:mealPlanCal,type:"breakfast"}, function (err, ret) {
+          if (!err) {
+            return ret;
+          } else {
+            console.log("could not find breakfasts", err);
+            return err;
+          }
+          });
+      var array = [];
+      for(let i=0; i<breakfasts.length;i++){
+        var flag = true;
+        console.log(breakfasts[i])
+        for(let j=0;j<user.values.allergy.length;j++){
+          if(flag && (breakfasts[i].category).includes(user.values.allergy[j])){
+            flag = true; 
+          } else {
+            flag = false;
+          }
+          console.log(user.values.allergy[j]);
+        }
+        if(flag){
+          array.push(breakfasts[i]);
+          console.log("YES");
+        }
       }
-      });
-    res.locals.lunches = await Meals.find({type:"lunch"}, function (err, ret) {
-      if (!err) {
-        return ret;
-      } else {
-        console.log("could not find lunches", err);
-        return err;
-      }
-      });
+
+      res.locals.breakfasts = array;
 
 
+      var lunches= await Meals.find({calories:mealPlanCal,type:"lunch"}, function (err, ret) {
+          if (!err) {
+            return ret;
+          } else {
+          console.log("could not find lunches", err);
+          return err;
+          }
+          });
+      var array = [];
+      for(let i=0; i<lunches.length;i++){
+        var flag = true;
+        for(let j=0;j<user.values.allergy.length;j++){
+          if(flag && (lunches[i].category).includes(user.values.allergy[j])){
+            flag = true; 
+          } else {
+            flag = false;
+          }
+        }
+        if(flag){
+          array.push(lunches[i]);  
+        }
+      }
+
+      res.locals.lunches = array;
+
+      var dinners = await Meals.find({calories:mealPlanCal,type:"dinner"}, function (err, ret) {
+          if (!err) {
+            return ret;
+          } else {
+            console.log("could not find dinners", err);
+            return err;
+          }
+          });
+      var array = [];
+      for(let i=0; i<dinners.length;i++){
+        var flag = true;
+        for(let j=0;j<user.values.allergy.length;j++){
+          if(flag && (dinners[i].category).includes(user.values.allergy[j])){
+            flag = true; 
+          } else {
+            flag = false;
+          }
+        }
+        if(flag){
+          array.push(dinners[i]);  
+        }
+      }
+      res.locals.dinners = array;
+
+      var teas = await Meals.find({calories:mealPlanCal,type:"tea"}, function (err, ret) {
+          if (!err) {
+            return ret;
+          } else {
+            console.log("could not find teas", err);
+            return err;
+          }
+          });
+      var array = [];
+      for(let i=0; i<teas.length;i++){
+        var flag = true;
+        for(let j=0;j<user.values.allergy.length;j++){
+          if(flag && (teas[i].category).includes(user.values.allergy[j])){
+            flag = true; 
+          } else {
+            flag = false;
+          }
+        }
+        if(flag){
+          array.push(teas[i]);  
+        }
+      }
+      res.locals.teas = array;
+
+    }
 
 		res.render('meal-plans');
-		});
+});
 
-app.get('/output', async function (req, res) {
-    res.locals.breakfast = await Meals.findOne({type:"breakfast"}, function (err, ret) {
-      if (!err) {
+app.post('/output-result-rec', async function (req, res) {
+    var data = req.body;
+    console.log(data);
+    var user = req.session.personalisedState;
+
+    user.values.breakfast = data['breakfasts'];
+    user.values.lunch = data['lunches'];
+    user.values.dinner = data['dinners'];
+    user.values.tea = data['teas'];
+
+    res.locals.breakfast = await Meals.findOne({ _id:user.values.breakfast }, function (err, ret) {
+        if (!err) {
         return ret;
-      } else {
+        } else {
+        console.log("could not find breakfast", err);
+        return err;
+        }
+        });
+    res.locals.lunch =  await Meals.findOne({ _id:user.values.lunch }, function (err, ret) {
+        if (!err) {
+        return ret;
+        } else {
         console.log("could not find lunch", err);
         return err;
-      }
-      });
-		res.render('output-result-rec');
-		});
+        }
+        });
+    res.locals.dinner =  await Meals.findOne({ _id:user.values.dinner }, function (err, ret) {
+        if (!err) {
+        return ret;
+        } else {
+        console.log("could not find dinner", err);
+        return err;
+        }
+        });
+    res.locals.tea =  await Meals.findOne({ _id:user.values.tea }, function (err, ret) {
+        if (!err) {
+        return ret;
+        } else {
+        console.log("could not find tea", err);
+        return err;
+        }
+        });
+    res.locals.activity = data['leisure-activity'];
+    res.locals['activity_mins']= getActivityDuration(data['leisure-activity'],user.values['energy_exp'],user.values.weight);
+
+    /* Reset state after it's not needed anymore. */
+	  resetPersonalisedState(req.session);
+    res.render('output-result-rec');
+});
 
 app.get('/account-info', restrict, async function (req, res) {
 		var username = res.locals.username = req.session.user.credentials.username;
@@ -1044,17 +1243,17 @@ function calcRMR(weight, height, age, sex) {
 
 
 function calcEESleep(rmr, totalHoursOfSleep) {
-	return rmr * totalHoursOfSleep;
+	return (rmr/24) * totalHoursOfSleep;
 }
 
 
 
 function calcEEWork(rmr, pal, totalHoursOfWork) {
-	return rmr * pal * totalHoursOfWork;
+	return (rmr/24) * pal * totalHoursOfWork;
 }
 
 function calcEECommuting(met, weight, totalMinutes) {
-	return met * body *(totalMinutes/60.0);
+	return met * weight *(totalMinutes/60.0);
 }
 
 function calcEEActivity(met, weight, totalMinutes) {
@@ -1065,7 +1264,7 @@ function calcEEHousehold(met, weight, totalMinutes) {
 }
 
 
-function calcWeeklyTEE(totalSleepOnWeekdays, totalSleepOnWeekend, totalHoursWork, totalMinutesCommute, minsFirstAct, minsSecAct, minsFirstHouse, minsSecHouse, rmr, pal, metCom, metFirstAct,metSecondAct,metFirstHouse,metSecondHouse) {
+function calcWeeklyTEE(weight,totalSleepOnWeekdays, totalSleepOnWeekend, totalHoursWork, totalMinutesCommute, minsFirstAct, minsSecAct, minsFirstHouse, minsSecHouse, rmr, pal, metCom, metFirstAct,metSecondAct,metFirstHouse,metSecondHouse) {
 
 	var total =
 		(totalSleepOnWeekdays * 5 + totalSleepOnWeekend*2)+
@@ -1076,12 +1275,12 @@ function calcWeeklyTEE(totalSleepOnWeekdays, totalSleepOnWeekend, totalHoursWork
 
 	var base= calcEESleep(rmr, totalSleepOnWeekdays) * 5
 		+ calcEESleep(rmr, totalSleepOnWeekend) * 2
-		+ calcEEWork(rmr, pal, totalHoursOfWork)
+		+ calcEEWork(rmr, pal, totalHoursWork)
 		+ calcEECommuting(metCom, weight, totalMinutesCommute)
 		+ calcEEActivity(metFirstAct, weight, minsFirstAct)
 		+ calcEEActivity(metSecondAct, weight, minsSecAct)
 		+ calcEEHousehold(metFirstHouse, weight, minsFirstHouse);
-		+ calcEEHousehold(metSecHouse, weight, minsSecondHouse);
+	+ calcEEHousehold(metSecondHouse, weight, minsSecHouse);
 
 	if (total == 168) {
 		return base;
@@ -1094,7 +1293,7 @@ function calcWeeklyTEE(totalSleepOnWeekdays, totalSleepOnWeekend, totalHoursWork
 
 function calcPAL(occupation,sex){
   var pal;
-  if(occupation.match(/^(technician|information|healthDiag|executive|art|personal|management|teacher|protective|engineer|miscAdmin|otherProf|records|secretary)$/)){
+  if(occupation.match(/^(technician|information|healthDiag|executive|art|personal|management|teacher|protective|engineer|miscAdmn|otherProf|records|secretary)$/)){
     pal = 1.4;
   } else if(occupation.match(/^(supervisor|fabricator|otherTrans|private|vehicle|material|cook|miscFood|extractive|laborerNotConstr|sales|healthServ|salesReps)$/)){
     if(sex == 'male'){
@@ -1122,8 +1321,12 @@ function calcMETCom(walkingEffort,cyclingEffort){
     met = 3.3;
   } else if(walkingEffort = 'moderate'){
     met = 3.6;
-  } else if(walkingEffor = 'vigorous'){
+  } else if(walkingEffort = 'vigorous'){
     met = 4;
+  } else if(walkingEffort = 'none'){
+    //nothing
+  } else {
+    throw 'error in commuting - invalid walking effort';
   }
   //cycling
   if(cyclingEffort == 'light'){
@@ -1132,23 +1335,25 @@ function calcMETCom(walkingEffort,cyclingEffort){
     met += 7.0;
   } else if(cyclingEffort == 'vigorous'){
     met += 11.0;
+  } else if(cyclingEffort == 'none'){
+    //nothing
   } else {
-    throw 'error in commuting';
+    throw 'error in commuting - invalid cycling effort';
   }
   return met;
 }
 
 function calcMETActiv(activity){
   var met;
-  if(activity.match(/^(bowling|archery|billiards|darts|golf|frisbee|yoga)$/)){
+  if(['bowling','archery','billiards','darts','golf','frisbee','yoga'].includes(activity)){
     met = 2.5;
-  } else if(activity.match(/^(ballet|bicycleLight|canoeLight|cricket|horse|sBallOff|surf|volley|walkLight|dog|weighLight)$/)){
+  } else if(['ballet','bicycleLight','canoeLight','cricket','horse','sBallOff','surf','volley','walkLight','dog','weighLight'].includes(activity)){
     met = 4.0;
-  } else if(activity.match(/^(aerobic|basketball|bicycleMod|canoeMod|jogMod|kayak|netball|skiiLight|soccer|sBallPitch|swimLight|tennis|weighVig)$/)){
+  } else if(['aerobic','basketball','bicycleMod','canoeMod','jogMod','kayak','netball','skiiLight','soccer','sBallPitch','swimLight','tennis','weighVig'].includes(activity)){
     met = 6.0;
-  } else if(activity.match(/^(basket|beach|boxing|hockey|netball|runMod|skiiVig|skipping|volleyComp)$/)){
+  } else if(['basket','beach','boxing','hockey','netball','runMod','skiiVig','skipping','volleyComp'].includes(activity)){
     met = 8.0;
-  } else if(activity.match(/^(bicycleVig|canoeVig|rugby|runVig|soccerComp|squash|swimVig|polo)$/)){
+  } else if(['bicycleVig','canoeVig','rugby','runVig','soccerComp','squash','swimVig','polo'].includes(activity)){
     met = 10.0;
   } else {
     throw 'error in leisure activity';
@@ -1184,4 +1389,62 @@ function calcEnergyDeficit(goal){
     throw 'goal out of bounds';
   }
   return deficit;
+}
+
+function calcMealPlanCalories(tee,deficit){
+  return tee-deficit;
+}
+
+function getStringPercentage(percentage){ //input: percentage e.g. 51 - output: '50/50'
+  if(percentage<=20){
+    return '20/80';
+  } else if((percentage>20)&&(percentage<=30)){
+    return '30/70';
+  } else if((percentage>30)&&(percentage<=40)){
+    return '40/60';
+  } else if((percentage>40)&&(percentage<=50)){
+    return '50/50';
+  } else if((percentage>50)&&(percentage<=60)){
+    return '60/40';
+  } else if((percentage>60)&&(percentage<=70)){
+    return '70/30';
+  } else if(percentage>70){
+    return '80/20';
+  }
+}
+
+function getMealPlanCalories(userCal){
+  if(userCal<=1100){
+    return 1000;
+  } else if(userCal<=1300){
+    return 1200;
+  } else if(userCal<=1500){
+    return 1400;
+  } else if(userCal<=1700){
+    return 1600;
+  } else if(userCal<=1900){
+    return 1800;
+  } else if(userCal<=2100){
+    return 2000;
+  } else if(userCal<=2300){
+    return 2200;
+  } else if(userCal<=2500){
+    return 2400;
+  } else {
+    throw 'error in calories'
+  }
+}
+
+function getActivityDuration(activity,ee,weight){
+
+  if(['bowling','archery','billiards','darts','golf','frisbee','yoga','ballet','bicycleLight','canoeLight','cricket','horse','sBallOff','surf','volley','walkLight','dog','weighLight'].includes(activity)){
+    return ((60*ee)/(4.0*weight))*7;
+  } else if(['aerobic','basketball','bicycleMod','canoeMod','jogMod','kayak','netball','skiiLight','soccer','sBallPitch','swimLight','tennis','weighVig'].includes(activity)){
+    return ((60*ee)/(6.0*weight))*7;;
+  } else if(['basket','beach','boxing','hockey','netball','runMod','skiiVig','skipping','volleyComp','bicycleVig','canoeVig','rugby','runVig','soccerComp','squash','swimVig','polo'].includes(activity)){
+    return ((60*ee)/(8.0*weight))*7;
+  } else {
+    throw 'error in finding PA duration';
+  }
+
 }

@@ -33,52 +33,9 @@
     <div id="colorlib-main">
         <section class="ftco-section pt-4 mb-5 ftco-intro">
             <div class="container-fluid px-3 px-md-0">
-                <b>Step 4.1 : Personalization: Activity type and Allerges/Intolerances</b>
-                <form action="/output-result-rec" method="POST">
-                    <h5>1. Physical Activity</h5>
-                    <hr>
-                    <div class="alert alert-info">
-                        <strong>Message:</strong><br>
-                        The additional time you need to devote on physical activity/exercise depends on the activity desired
-
-                    </div> <br>
-                    <label for="recAct">Choose one of the activities listed:</label>
-                    <select name="leisure-activity" id="recAct">
-                        <option value="bowling">Bowling</option>
-                        <option value="archery">Archery</option>
-                        <option value="billiards">Billiards</option>
-                        <option value="darts">Darts</option>
-                        <option value="golf">Golf</option>
-                        <option value="frisbee">Frisbee</option>
-                        <option value="yoga">Yoga, stretching</option>
-                        <option value="ballet">Ballet or modern dancing</option>
-                        <option value="bicycleLight">Bicycling, <16 hm/h (light effort)</option>
-                        <option value="canoeLight">Canoeing, rowing 3.0-6.0 km/h (light effort)</option>
-                        <option value="cricket">Cricket</option>
-                        <option value="horse">Horseback riding</option>
-                        <option value="sBallOff">Softball or baseball, officiating</option>
-                        <option value="surf">Surfing</option>
-                        <option value="volley">Volleyball, training</option>
-                        <option value="walkLight)">Walking 4.8-5.6k m/h (light effort)</option>
-                        <option value="dog">Walking the dog</option>
-                        <option value="weighLight">Weigh lifting (light-moderate effort)</option>
-                        <option value="aerobic">Aerobic dancing</option>
-                        <option value="basketball">Basketball training</option>
-                        <option value="bicycleMod">Bicycling 16.0-22.0 km/h (moderate effort)</option>
-                        <option value="canoeMod">Canoeing, rowing 6.5-9.5 km/h (moderate effort)</option>
-                        <option value="jogMod">Jogging, 7-9 km/h</option>
-                        <option value="kayak">Kayaking</option>
-                        <option value="netball">Netball, training</option>
-                        <option value="skiiLight">Skiing, slow or light effort</option>
-                        <option value="soccer">Soccer, training</option>
-                        <option value="sBallPitch">Softball or baseball, pitching</option>
-                        <option value="swimLight">Swimming, freestyle (light-moderate effort)</option>
-                        <option value="tennis">Tennis</option>
-                        <option value="weighVig">Weigh lifting (vigorous effort)</option>
-                    </select><br><br>
-
-                    <h5>2. Dietary Goals</h5>
-                    <hr>
+                <b>Step 4.1 : Personalisation: Allerges/Intolerances</b>
+                <form action="/meal-plans" method="POST">
+                
                     <!-- SEX -->
                     <label>Do you suffer from any allergies or food intolerances?</label>
                     <input type="radio" id="yes" name="answer" value="Yes" onchange="displayQuestions(this.value)">
@@ -88,10 +45,11 @@
                     <br><br>
                     <div id="yesQuestion" style="display:none;">
                         <label for="selectAllergy">Please indicate what type of allergies or food intolerances you suffer from:</label>
-                        <select name="allergies" id="selectAllergy">
+                        <select name="allergies" id="selectAllergy" multiple>
                             <option value="gluten">Celiac disease/Gluten intolerance</option>
                             <option value="lactose">Lactose intolerance</option>
-                            <option value="nuts">Nuts allergy</option>
+                            <option value="nut">Nuts allergy</option>
+                            <option value="lupin">Lupin allergy</option>
                         </select>
                         <br><br><br>
                     </div>

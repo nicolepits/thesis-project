@@ -33,7 +33,11 @@
     <div id="colorlib-main">
         <section class="ftco-section pt-4 mb-5 ftco-intro">
             <div class="container-fluid px-3 px-md-0">
-            <table>
+            <h3>Results</h3>
+            <hr><br>
+            <h4>Meal Plan</h4><br>
+            <h5>Breakfast:</h5>
+            <table class="table table-bordered">
             <tr><th>calories</th><td><%= breakfast.calories %></td></tr>
             <tr><th>type</th><td><%= breakfast.type %></td></tr>
             <tr><th>name</th><td><%= breakfast.name %></td></tr>
@@ -44,7 +48,51 @@
             <tr><th>protein</th><td><%= breakfast.protein %></td></tr>
             <tr><th>fat</th><td><%= breakfast.fat %></td></tr>
             <tr><th>energy</th><td><%= breakfast.energy %></td></tr>
-            </table>
+            </table><br>
+            <h5>Lunch:</h5>
+            <table class="table table-bordered">
+            <tr><th>calories</th><td><%= lunch.calories %></td></tr>
+            <tr><th>type</th><td><%= lunch.type %></td></tr>
+            <tr><th>name</th><td><%= lunch.name %></td></tr>
+            <tr><th>ingredients</th><td><%= lunch.ingredients %></td></tr>
+            <tr><th>preparation</th><td><%= lunch.preparation %></td></tr>
+            <tr><th>category</th><td><%= lunch.category %></td></tr>
+            <tr><th>cho</th><td><%= lunch.cho %></td></tr>
+            <tr><th>protein</th><td><%= lunch.protein %></td></tr>
+            <tr><th>fat</th><td><%= lunch.fat %></td></tr>
+            <tr><th>energy</th><td><%= lunch.energy %></td></tr>
+            </table><br>
+            <h5>Dinner:</h5>
+            <table class="table table-bordered">
+            <tr><th>calories</th><td><%= dinner.calories %></td></tr>
+            <tr><th>type</th><td><%= dinner.type %></td></tr>
+            <tr><th>name</th><td><%= dinner.name %></td></tr>
+            <tr><th>ingredients</th><td><%= dinner.ingredients %></td></tr>
+            <tr><th>preparation</th><td><%= dinner.preparation %></td></tr>
+            <tr><th>category</th><td><%= dinner.category %></td></tr>
+            <tr><th>cho</th><td><%= dinner.cho %></td></tr>
+            <tr><th>protein</th><td><%= dinner.protein %></td></tr>
+            <tr><th>fat</th><td><%= dinner.fat %></td></tr>
+            <tr><th>energy</th><td><%= dinner.energy %></td></tr>
+            </table><br>
+            <h5>Morning/Afternoon tea:</h5>
+            <table class="table table-bordered">
+            <tr><th>calories</th><td><%= tea.calories %></td></tr>
+            <tr><th>type</th><td><%= tea.type %></td></tr>
+            <tr><th>name</th><td><%= tea.name %></td></tr>
+            <tr><th>ingredients</th><td><%= tea.ingredients %></td></tr>
+            <tr><th>category</th><td><%= tea.category %></td></tr>
+            <tr><th>cho</th><td><%= tea.cho %></td></tr>
+            <tr><th>protein</th><td><%= tea.protein %></td></tr>
+            <tr><th>fat</th><td><%= tea.fat %></td></tr>
+            <tr><th>energy</th><td><%= tea.energy %></td></tr>
+            </table><br>
+            <br>
+            <h4>Physical Activity</h4><br>
+            <div class="alert alert-info">
+                        <strong>Physical Activity:</strong><br>
+                        The additional time you need to devote on the activity chosen (<%- activity %>) <strong>per week</strong> is <%- activity_mins %> minutes.
+                    </div>
             </div>
         </section>
     </div>
