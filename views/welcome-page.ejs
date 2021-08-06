@@ -1,99 +1,34 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <title>Diabetes type 2 risk assessment menu</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
-
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-
-    <link rel="stylesheet" href="css/style.css">
-
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/chatBot.css">
-
-</head>
-<body>
-<div id="colorlib-page">
-    <a href="#" class="js-colorlib-nav-toggle colorlib-nav-toggle"><i></i></a>
-    <aside id="colorlib-aside" role="complementary" class="js-fullheight">
-        <nav id="colorlib-main-menu" role="navigation">
-            <ul>
-                <li class="colorlib-active"><a href="/">Home</a></li>
-                <li><a href="/risk">Risk assessment</a></li>
-                <li><a href="/personalized-rec">Personalized Tools</a>
-                </li>
-                <li><a href="#">Specialists</a></li>
-                <li><a href="/account-info">My Account</a></li>
-                <li><%- status_msg %></li>
-            </ul>
-        </nav>
-    </aside>
-
-    <div id="colorlib-main">
-        <section class="ftco-section pt-4 mb-5 ftco-intro">
-            <div class="container-fluid px-3 px-md-0">
-                <div class="row">
-                    <div class="col-md-12 mb-4">
-                        <h1 class="h2">Type 2 Diabetes Mellitus risk assessment and personalized tools</h1>
-                        <hr>
-                    </div>
-                    <div class="col-md-6">
-                        <h2 class="h4">About</h2>
-                        <hr>
-                        <p>A web-based app which provides T2D and HTN tools for performing risk calculations and receiving personalized recommendations</p>
-                    </div>
-                    <div class="col-md-6">
-                        <h2 class="h4">Sources</h2>
-                        <hr>
-                        <p>Display the sources</p>
-                    </div>
-                    <div class="col-md-6">
-                        <h2 class="h4">App Features</h2>
-                        <hr>
-                        <ul>
-                            <li>&check; Estimate Type 2 Diabetes and Hypertension risk</li>
-                            <li>&check; Set personalized goals:
-                            <li>&check; Complete form with characteristics and lifestyle habits</li>
-                            <li>&check; Set weight goal</li>
-                            <li>&check; Get personalized/recommended physical activities and/or diet plans</li>
-                            <li>&check; Find closest specialists/nutritionists</li>
-                            <li>&check; Keep track of progress on profile</li>
-                        </ul>
-                    </div>
-                    <div class="col-md-6">
-                        <h2 class="h4">Contact</h2>
-                        <hr>
-                        <p>example@info.com</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </div><
+<%- include('header', { currentPage: 'home' }); -%>
+<div class="col-md-12 mb-4">
+    <h1 class="h2">Type 2 Diabetes Mellitus risk assessment and personalized tools</h1>
+    <hr>
 </div>
-</section>
-<div class="chatBot">
-    <div class="chatBotHeading">
-        <label for="chatTextBox" id="chatOpenTrigger" class="">Need a specialist? Ask Me!</label>
-    </div>
-    <hr class="">
-    <div class="chatBody">
-        <div class="chatSession">
-        </div>
-    </div>
-    <form class="chatForm" autocomplete="off">
-        <div class="typingArea">
-            <textarea name="chatInput" id="chatTextBox" class="textArea" onblur="if(!validateMessage()) this.value = 'Type here...'" onfocus="if(!validateMessage()) this.value = ''"></textarea>
-            <button type="submit" class="sendButton" id="sendButton"><img src="./Gfx/send.svg" alt="Send" srcset=""></button>
-        </div>
-        <button type="button" id="chatCloseTrigger">Close Chat!</button>
-    </form>
+<div class="col-md-6">
+    <h2 class="h4">About</h2>
+    <hr>
+    <p>A web-based app which provides T2D and HTN tools for performing risk calculations and receiving personalized recommendations</p>
 </div>
-<script src="./js/chatBotConversation.js"></script>
-<script src="./js/chatBotValidate.js"></script>
-<script src="./js/chatBotAnimate.js"></script>
-</body>
-</html>
-
+<div class="col-md-6">
+    <h2 class="h4">Sources</h2>
+    <hr>
+    <p>Display the sources</p>
+</div>
+<div class="col-md-6">
+    <h2 class="h4">App Features</h2>
+    <hr>
+    <ul>
+        <li>&check; Estimate Type 2 Diabetes and Hypertension risk</li>
+        <li>&check; Set personalized goals:
+        <li>&check; Complete form with characteristics and lifestyle habits</li>
+        <li>&check; Set weight goal</li>
+        <li>&check; Get personalized/recommended physical activities and/or diet plans</li>
+        <li>&check; Find closest specialists/nutritionists</li>
+        <li>&check; Keep track of progress on profile</li>
+    </ul>
+</div>
+<div class="col-md-6">
+    <h2 class="h4">Contact</h2>
+    <hr>
+    <p>example@info.com</p>
+</div>
+<%- include('footer'); -%>

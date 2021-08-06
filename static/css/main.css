@@ -11,10 +11,10 @@
           box-sizing: border-box !important;
   word-wrap: break-word;
   font-family: 'Varela Round', sans-serif;
-  -webkit-transition-duration: 0.2s;
-          transition-duration: 0.2s;
-  -webkit-transition-timing-function: cubic-bezier(0.75, -0.15, 0, 3);
-          transition-timing-function: cubic-bezier(0.75, -0.15, 0, 3);
+
+
+
+
 }
 
 body {

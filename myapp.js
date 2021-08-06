@@ -572,7 +572,7 @@ res.locals.htn = {
 	"score": htnPoints.toString(),
 }
 if (htnPoints >= 26) {
-	res.locals.htn.class = "warn";
+	res.locals.htn.class = "danger";
 	res.locals.htn.message = HTN_RISK;
 }
 res.locals.ir = {
@@ -581,10 +581,11 @@ res.locals.ir = {
 	"score": irPoints.toString(),
 }
 if (irPoints >= 23 && irPoints <= 30) {
-	res.locals.htn.class = "warn"
-		res.locals.htn.message = IR_RISK;
+	res.locals.ir.class = "warning"
+		res.locals.ir.message = IR_RISK;
 } else if (irPoints >= 31) {
-	res.locals.htn.message = IR_VRISK;
+  res.locals.ir.class = "danger";
+	res.locals.ir.message = IR_VRISK;
 }
 
 

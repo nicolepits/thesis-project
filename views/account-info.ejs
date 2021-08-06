@@ -1,36 +1,4 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <title>Diabetes type 2 risk assessment menu</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
-
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-
-    <link rel="stylesheet" href="css/style.css">
-
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/chatBot.css">
-
-</head>
-<body>
-<div id="colorlib-page">
-    <aside id="colorlib-aside" role="complementary" class="js-fullheight">
-        <nav id="colorlib-main-menu" role="navigation">
-            <ul>
-                <li class="colorlib-active"><a href="/welcome-page">Home</a></li>
-                <li><a href="/risk">Risk assessment</a></li>
-                <li><a href="/personalized-rec">Personalized Tools</a>
-                </li>
-                <li><a href="#">Specialists</a></li>
-                <li><a href="/account-info">My Account</a></li>
-            <li><%- status_msg %></li>
-            </ul>
-        </nav>
-    </aside>
-
+<%- include('header', { currentPage: 'account' }); -%>
     <div id="colorlib-main">
         <section class="ftco-section pt-4 mb-5 ftco-intro">
             <div class="container-fluid px-3 px-md-0">
@@ -102,7 +70,7 @@
                 </div>
             </div>
         </section>
-    </div><
+    </div>
 </div>
 </section>
 <div class="chatBot">
@@ -126,6 +94,5 @@
 <script src="./js/chatBotValidate.js"></script>
 <script src="./js/chatBotAnimate.js"></script>
 <script src="./js/main.js"></script>
-</body>
-</html>
+<%- include('footer'); -%>
 
