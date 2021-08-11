@@ -38,12 +38,13 @@ const meal = new Schema(
 		option: Number,
 		name: String,
 		ingredients: String,
-    preparation: String,
+        preparation: String,
     category: String,
     cho: Number,
     protein: Number,
     fat:Number,
-    energy: Number
+    energy: Number,
+    img: [String]
   },
   {
     collection: 'meal_plans'

@@ -6,7 +6,7 @@ var chatBotSendButton           = document.querySelector( ".chatBot .chatForm #s
 var chatBotTextArea             = document.querySelector( ".chatBot .chatForm #chatTextBox" )
 
 // Default values for replies
-var chatBotInitiateMessage      = "Hello! I am ChatBot."
+var chatBotInitiateMessage      = "Hello! Need a specialist?"
 var chatBotBlankMessageReply    = "Type something!"
 var chatBotReply                = "{{ reply }}"
 
@@ -80,10 +80,14 @@ function createContainer( typeOfContainer ) {
             var allReplyContainers      = document.querySelectorAll( "#replyContainer" )    
             var lastReplyContainer      = allReplyContainers[ allReplyContainers.length - 1 ]
             var newReply                = document.createElement( "p" )
+            var newSelectReply        = document.createElement("select");
             newReply.setAttribute( "class" , "reply animateChat accentColor" )
             switch( typeOfContainer ){
                 case "reply"        :
-                    newReply.innerHTML  = chatBotReply
+                    newReply.innerHTML  = "Sweet! Choose one of the following regions in Greece:"
+                    newSelectReply.innerHTML =  "";                 
+                    lastReplyContainer.appendChild( newReply )
+                    lastReplyContainer.appendChild( newSelectReply )
                     break
                 case "initialize"   :
                     newReply.innerHTML  = chatBotInitiateMessage

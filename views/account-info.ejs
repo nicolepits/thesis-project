@@ -11,57 +11,14 @@
                     <div class="col-md-12">
                         <h2 class="h4">Info: <%- username %></h2>
                         <hr>
-                        <table class="table table-bordered" id="myTable">
-                            <thead class="thead-dark">
-                                <tr>
-                                <th scope="col"></th>
-                                <th scope="col"></th>
-                                </tr>
-                         
-                            </thead>
-                            <tbody id="rows">
-                            <tr>
-                                <th scope="col">Email</th>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <th scope="col">Sex</th>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <th scope="col">Ethnicity</th>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <th scope="col">Birthday Date</th>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <th scope="col">Height</th>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <th scope="col">Weight</th>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <th scope="col">IR Risk</th>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <th scope="col">HTN Risk</th>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <th scope="col">Weight Goal</th>
-                                <td></td>
-                            </tr>
-                            </tbody>
-                        </table>
+                        <%-info %>
+                        
                         <br>
-                        <a href="/account-info/delete-data">Delete all data</a><br>
-                        <a href="/account-info/delete-user">Delete account</a><br>
-                        <a href="">Enter batch mode</a>
+                        
+                        <a href="/account-info/delete-data"><input type="submit" value="Delete All Data"></input></a>
+                        <a href="/account-info/delete-user"><input type="submit" value="Delete Account"></input></a>
+                        <a href=""><input type="submit" value="Enter batch mode"></input></a>
+                        
                         <h2>Past measurements</h2>
                         <%-history%>
                     </div>
