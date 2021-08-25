@@ -1,15 +1,13 @@
 <%- include('header', { currentPage: 'personalized' }); -%>
     <div id="colorlib-main">
         <section class="ftco-section pt-4 mb-5 ftco-intro">
-            <div class="container-fluid px-3 px-md-0">
-            <h3>Results</h3>
-            <hr><br>
-            <h4>Meal Plan</h4><br>
-            <h5>Breakfast:</h5>
+           <div class="container-fluid px-3 px-md-0">
+            <h3>Meal Plan</h3>
+            <hr>
+            <h4>Breakfast:</h4>
             <table class="table table-bordered">
-            <tr><th>calories</th><td><%= breakfast.calories %></td></tr>
-            <tr><th>type</th><td><%= breakfast.type %></td></tr>
-            <tr><th>name</th><td><%= breakfast.name %></td></tr>
+
+            <img class="icon" src="food_icons/<%= breakfast.image %>"><h3 class="icon_text"><%= breakfast.name %></h3>
             <tr><th>ingredients</th><td><%= breakfast.ingredients %></td></tr>
             <tr><th>preparation</th><td><%= breakfast.preparation %></td></tr>
             <tr><th>category</th><td><%= breakfast.category %></td></tr>
@@ -17,9 +15,12 @@
             <tr><th>protein</th><td><%= breakfast.protein %></td></tr>
             <tr><th>fat</th><td><%= breakfast.fat %></td></tr>
             <tr><th>energy</th><td><%= breakfast.energy %></td></tr>
-            </table><br>
-            <h5>Lunch:</h5>
+           </table><br>
+            <h4>Lunch:</h4>
             <table class="table table-bordered">
+            
+            <img class="icon" src="food_icons/<%= lunch.image %>"><h3 class="icon_text"><%= lunch.name %></h3>
+
             <tr><th>calories</th><td><%= lunch.calories %></td></tr>
             <tr><th>type</th><td><%= lunch.type %></td></tr>
             <tr><th>name</th><td><%= lunch.name %></td></tr>
@@ -31,8 +32,10 @@
             <tr><th>fat</th><td><%= lunch.fat %></td></tr>
             <tr><th>energy</th><td><%= lunch.energy %></td></tr>
             </table><br>
-            <h5>Dinner:</h5>
+            <h4>Dinner:</h4>
             <table class="table table-bordered">
+            <img class="icon" src="food_icons/<%= dinner.image %>"><h3 class="icon_text"><%= dinner.name %></h3>
+
             <tr><th>calories</th><td><%= dinner.calories %></td></tr>
             <tr><th>type</th><td><%= dinner.type %></td></tr>
             <tr><th>name</th><td><%= dinner.name %></td></tr>
@@ -44,8 +47,11 @@
             <tr><th>fat</th><td><%= dinner.fat %></td></tr>
             <tr><th>energy</th><td><%= dinner.energy %></td></tr>
             </table><br>
-            <h5>Morning/Afternoon tea:</h5>
+            <h4>Morning/Afternoon tea:</h4>
+
             <table class="table table-bordered">
+            <img class="icon" src="food_icons/<%= tea.image %>"><h3 class="icon_text"><%= tea.name %></h3>
+
             <tr><th>calories</th><td><%= tea.calories %></td></tr>
             <tr><th>type</th><td><%= tea.type %></td></tr>
             <tr><th>name</th><td><%= tea.name %></td></tr>
@@ -57,7 +63,8 @@
             <tr><th>energy</th><td><%= tea.energy %></td></tr>
             </table><br>
             <br>
-            <h4>Physical Activity</h4><br>
+            <h3>Physical Activity</h3>
+            <hr>
             <div class="alert alert-info">
                         <strong>Physical Activity:</strong><br>
                         The additional time you need to devote on the activity chosen (<%- activity %>) <strong>per week</strong> is <%- activity_mins %> minutes.

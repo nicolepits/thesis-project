@@ -44,7 +44,7 @@ const meal = new Schema(
     protein: Number,
     fat:Number,
     energy: Number,
-    img: [String]
+    image: String 
   },
   {
     collection: 'meal_plans'

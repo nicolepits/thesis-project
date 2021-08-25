@@ -294,3 +294,7 @@ td {
     padding-top: 20px;
     width: 80px;
 }
+
+.icon {
+  max-width: 5%;
+}

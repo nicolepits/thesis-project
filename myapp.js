@@ -312,6 +312,43 @@ app.get('/risk-result', function(req, res) {
     res.render('risk-result');
 });
 
+app.get('/batch-mode', function(req, res) {
+  res.render('batch-mode');
+});
+app.post('/batch-mode', function(req, res) {
+  var data = req.body;
+  var objects = csvHandler();
+  let csv
+
+  //Loop the array of objects
+  for(let row = 0; row< objects.length; row++){
+    let keysAmount = Object.keys(objects[row]).length
+    let keysCounter = 0;
+
+    //if this is the first row, then generate the headings
+    if(row == 0){
+
+      //Loop each property of the object
+      for(let key in objects[row]){
+        //This is to not add a comma at the last cell
+        //The '\n' adds a new line
+        csv += key + (keysCounter+1 < keysAmount ? ',' : '\r\n' )
+        keysCounter++
+      }
+    } else {
+      for(let key in objects[row]){
+        csv += objects[row][key] + (keysCounter+1 < keysAmount ? ',' : '\r\n' )
+        keysCounter++
+      }
+    }
+    keysCounter = 0;
+  }
+
+  //Loop done
+  res.locals.link = "";
+  res.locals.link = "<a href='data:text/plain;charset=utf-8,'"+ encodeURIComponent(csv)+" download='output.csv'>Download</a>"
+
+});
 function getAge(date) {
     var dob = new Date(date);
     //calculate month difference from current date in time
@@ -621,7 +658,6 @@ app.post('/risk-result', async function(req, res) {
 
 app.get('/', function(req, res) {
     res.render('welcome-page');
-    csvHandler()
 });
 
 
@@ -1611,6 +1647,6 @@ function csvHandler() {
 
         //console.log(jsonObj);
 
-
     });
+    return output;
 }

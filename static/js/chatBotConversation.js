@@ -16,6 +16,9 @@ var inputMessage                = ""
 // This helps generate text containers in the chat
 var typeOfContainer             = ""
 
+//Flag
+var flag = new Boolean();
+
 // Function to open ChatBot
 chatBotSendButton.addEventListener("click", (event)=> {
     // Since the button is a submit button, the form gets submittd and the complete webpage reloads. This prevents the page from reloading. We would submit the message later manually
@@ -79,15 +82,39 @@ function createContainer( typeOfContainer ) {
         case "reply"    :
             var allReplyContainers      = document.querySelectorAll( "#replyContainer" )    
             var lastReplyContainer      = allReplyContainers[ allReplyContainers.length - 1 ]
+            var nextReplyContainer = allReplyContainers[ allReplyContainers.length - 1 ]
             var newReply                = document.createElement( "p" )
+            //create option list for available regions
             var newSelectReply        = document.createElement("select");
+            var option1 = document.createElement("option");
+            option1.text = 'Pagrati'
+            option1.value = 'pagrati'
+            var option2 = document.createElement("option");
+            option2.text = 'Nea Smirni'
+            option2.value = 'neaSmirni'
+            newSelectReply.appendChild(option1);
+            newSelectReply.appendChild(option2);
+
             newReply.setAttribute( "class" , "reply animateChat accentColor" )
             switch( typeOfContainer ){
                 case "reply"        :
-                    newReply.innerHTML  = "Sweet! Choose one of the following regions in Greece:"
-                    newSelectReply.innerHTML =  "";                 
-                    lastReplyContainer.appendChild( newReply )
-                    lastReplyContainer.appendChild( newSelectReply )
+                    if( inputMessage == "Yes" || inputMessage == "yes"){
+                      newReply.innerHTML  = "Choose your region. Type 'okay' when done!";
+                      lastReplyContainer.appendChild( newReply )
+                      nextReplyContainer.appendChild(newSelectReply)
+                      flag = new Boolean(true);
+                    } else if( inputMessage == "No" || inputMessage == "no"){
+                      newReply.innerHTML = "Understood. Goodbye!"
+                      lastReplyContainer.appendChild( newReply )
+                    } else if( (inputMessage == "Okay" || inputMessage == "okay") && flag == true) {
+                      newReply.innerHTML = "Here are a few dietologists available in your area:"
+                      lastReplyContainer.appendChild( newReply )
+                      flag = new Boolean(false);
+                    } else {
+                      console.log(flag);
+                      newReply.innerHTML = "I am sorry, I cannot understand you. Try something else maybe?"
+                      lastReplyContainer.appendChild( newReply )
+                    }
                     break
                 case "initialize"   :
                     newReply.innerHTML  = chatBotInitiateMessage
