@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var cors = require('cors');
 var fs = require('fs');
+//let multer = require('multer');
 var session = require('express-session');
 var hash = require('pbkdf2-password')()
 var path = require('path');
@@ -45,7 +46,17 @@ app.use(session({
 
 //Node Config
 app.use(express.json());
-
+/**
+let storage = multer.diskStorage({
+  destination: function(req,file,callback) {
+    callback(null,'./uploads')
+  },
+  filename: function(req,file,callback) {
+    console.log(file)
+    callback(null,file.fieldname +'-'+Date.now()+path.extname(file.originalname))
+  }
+})
+**/
 //Start the server on port 3000
 app.listen(app.port);
 
@@ -93,6 +104,7 @@ app.use(function(req, res, next) {
     res.locals.status_msg = '';
     res.locals.logout = '';
     res.locals.months = 0;
+    res.locals.download = '';
     if (err) res.locals.message = '<p class="msg error">' + err + '</p>';
     if (msg) res.locals.message = '<p class="msg success">' + msg + '</p>';
     if (status_msg) res.locals.status_msg = status_msg;
@@ -316,10 +328,25 @@ app.get('/batch-mode', function(req, res) {
   res.render('batch-mode');
 });
 app.post('/batch-mode', function(req, res) {
-  var data = req.body;
-  var objects = csvHandler();
-  let csv
+/**
+  let upload = multer({
+    storage:storage,
+    fileFilter:function(req,file,callback){
+      let ext = path.extname(file.originalname)
+      if(ext!=='.csv'){
+        return callback(res.send('Only csv allowed'),null)
+      }
+      callback(null,true)
+    }
+  }).single('file');
+  upload(req,res,function(err) {
+    console.log("File uploaded successfully");
+  })
 
+**/
+  let objects = csvHandler();
+  console.log(objects);
+  let csv = ''
   //Loop the array of objects
   for(let row = 0; row< objects.length; row++){
     let keysAmount = Object.keys(objects[row]).length
@@ -343,11 +370,10 @@ app.post('/batch-mode', function(req, res) {
     }
     keysCounter = 0;
   }
-
+  console.log("Csv out of loop: "+csv);
   //Loop done
-  res.locals.link = "";
-  res.locals.link = "<a href='data:text/plain;charset=utf-8,'"+ encodeURIComponent(csv)+" download='output.csv'>Download</a>"
-
+  res.locals.download = "<a href='data:text/plain;charset=utf-8,"+ encodeURIComponent(csv)+"' download='output.csv'>Click Here To Download</a>"
+  res.render('batch-mode');
 });
 function getAge(date) {
     var dob = new Date(date);
@@ -1601,52 +1627,47 @@ function getActivityDuration(activity, ee, weight) {
 }
 
 function csvHandler() {
-    fs.readFile('data.csv', function(err, data) {
-        if (err) {
-            return console.log(err);
-        }
+  let data = fs.readFileSync('data.csv', 'utf8');
 
-        //convert and store csv data into a buffer
-        bufferString = data.toString();
+  //convert and store csv data into a buffer
+  bufferString = data.toString();
 
-        //store data for each individual person in an array index.
-        arr = bufferString.split('\n');
-        //console.log(arr);
+  //store data for each individual person in an array index.
+  arr = bufferString.split('\n');
+  //console.log(arr);
 
-        var jsonObj = [];
-        var headers = arr[0].split(',');
 
-        for (i = 0; i < arr.length; i++) {
-            var data = arr[i].split(',');
-            var obj = {};
-            for (var j = 0; j < data.length; j++) {
-                obj[headers[j].trim()] = data[j].trim();
-            }
-            jsonObj.push(obj);
-        }
+  let jsonObj = [];
+  let headers = arr[0].split(',');
 
-        //JSON.stringify(jsonObj);
-        /***
-        We will first calculate the risks for each object in array jsonObj
-        Then we will append the risks to another array along with the names 
-        ***/
-        var output = []; //empty array
-        for(j=1; j< (jsonObj.length - 1); j++){
-            console.log(jsonObj[j]);
-            jsonObj[j].birthDate = new Date(jsonObj[j].birthDate);
-            var [htnRisk,irRisk] = calculateRisks(jsonObj[j]);
-            var temp = {
-                name : jsonObj[j].name,
-                ir_risk: irRisk,
-                htn_risk: htnRisk
-            }
-            output.push(temp);
+  for (i = 0; i < arr.length; i++) {
+    data = arr[i].split(',');
+    let obj = {};
+    for (let j = 0; j < data.length; j++) {
+      obj[headers[j].trim()] = data[j].trim();
+    }
+    jsonObj.push(obj);
+  }
 
-        }
-        console.log(output);
+  //JSON.stringify(jsonObj);
+  /***
+    We will first calculate the risks for each object in array jsonObj
+    Then we will append the risks to another array along with the names 
+   ***/
+  let output = [];
+  for(j=1; j< (jsonObj.length - 1); j++){
+    //console.log(jsonObj[j]);
+    jsonObj[j].birthDate = new Date(jsonObj[j].birthDate);
+    let [htnRisk,irRisk] = calculateRisks(jsonObj[j]);
+    let temp = {
+name : jsonObj[j].name,
+       ir_risk: irRisk,
+       htn_risk: htnRisk
+    }
+    output.push(temp);
 
-        //console.log(jsonObj);
-
-    });
-    return output;
+  }
+  //console.log(output);//<-defined
+  return output;
+    //console.log(jsonObj);
 }
