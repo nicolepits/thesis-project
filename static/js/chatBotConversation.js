@@ -171,12 +171,33 @@ async function createContainer( typeOfContainer ) {
                       let experts = await getHTML('js/experts.json',region);
                       //alert(experts);
                       console.dir(experts);
+
+                      //create a new container for list of experts
+                      var newList = document.createElement( "div" )
+                      newList.setAttribute( "class" , "container" )
+                      newList.setAttribute( "id" , "replyContainer" )
+                      chatBotSession.appendChild( newList )
+
+                      let newOption = document.createElement("p"); 
+                      newOption.setAttribute("class", "reply animateChat accentColor");
+                      let html = '';
+                      let i = 1;
                       for(let item of experts){
                         console.log("yes");
-                        newReply.innerHTML = "<ul><li>"+item['name']+"</li><li>Tel:"+item['phone_number']+"</li><li>Address:"+item['address']+"</li></ul>"
-                        await lastReplyContainer.appendChild( newReply )
-                              
+                        if(i==1){
+                          html = "<ul>"
+                        }
+                        html = html + "<li>"+item['name']+"</li><li>Tel:"+item['phone_number']+"</li><li>Address:"+item['address']+"</li><br>"
+                        console.dir(html);
+                        if(i == experts.length){
+                          html = html + "</ul>"
+                        }
+                        i++;
+
                       }
+                      console.dir(html);
+                      newOption.innerHTML = html;
+                      newList.appendChild(newOption);
                       flag = new Boolean(false);
                     } else {
                       console.log(flag);
