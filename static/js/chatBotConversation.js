@@ -19,6 +19,59 @@ var typeOfContainer             = ""
 //Flag
 var flag = new Boolean();
 
+//readFile function
+function readFile(file,region){
+    let array = new Array();
+    var f =  new XMLHttpRequest();
+    f.open("GET",file, true);
+    f.onreadystatechange = function () {
+        if(f.readyState == 4){
+            if(f.status == 200 || f.status == 0){
+                var res = f.responseText;
+                var data = JSON.parse(res);
+                //let array = new Array();
+                //alert(JSON.stringify(experts));
+                //console.log(data['experts'])
+                data['experts'].forEach(function (item) {
+                    //console.log(item);
+                    if(item['region'] === region){
+                        array.push(item);
+                    }
+                });
+                //console.log(array);
+            }
+        }
+    }
+    f.send(null);
+    return array;
+}
+function getHTML(url,region) {
+    let array = new Array();
+    return new Promise(function (resolve, reject) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('get', url, true);
+        xhr.onload = function () {
+            var status = xhr.status;
+            if (status == 200) {
+                var data = JSON.parse(xhr.response);
+                //let array = new Array();
+                //alert(JSON.stringify(experts));
+                //console.log(data['experts'])
+                data['experts'].forEach(function (item) {
+                    //console.log(item);
+                    if(item['region'] === region){
+                        array.push(item);
+                    }
+                });
+                resolve(array);
+            } else {
+                reject(status);
+            }
+        };
+        xhr.send();
+    });
+}
+
 // Function to open ChatBot
 chatBotSendButton.addEventListener("click", (event)=> {
     // Since the button is a submit button, the form gets submittd and the complete webpage reloads. This prevents the page from reloading. We would submit the message later manually
@@ -40,7 +93,7 @@ chatBotSendButton.addEventListener("click", (event)=> {
     chatBotTextArea.focus()
 })
 
-function createContainer( typeOfContainer ) {
+async function createContainer( typeOfContainer ) {
     var containerID = ""
     var textClass   = ""
     switch( typeOfContainer ) {
@@ -86,14 +139,19 @@ function createContainer( typeOfContainer ) {
             var newReply                = document.createElement( "p" )
             //create option list for available regions
             var newSelectReply        = document.createElement("select");
+            newSelectReply.id = "list";
             var option1 = document.createElement("option");
             option1.text = 'Pagrati'
-            option1.value = 'pagrati'
+            option1.value = 'Pagrati'
             var option2 = document.createElement("option");
             option2.text = 'Nea Smirni'
-            option2.value = 'neaSmirni'
+            option2.value = 'Nea Smirni'
+            var option3 = document.createElement("option");
+            option3.text = 'Ampelokipoi'
+            option3.value = 'Ampelokipoi'
             newSelectReply.appendChild(option1);
             newSelectReply.appendChild(option2);
+            newSelectReply.appendChild(option3);
 
             newReply.setAttribute( "class" , "reply animateChat accentColor" )
             switch( typeOfContainer ){
@@ -109,6 +167,16 @@ function createContainer( typeOfContainer ) {
                     } else if( (inputMessage == "Okay" || inputMessage == "okay") && flag == true) {
                       newReply.innerHTML = "Here are a few dietologists available in your area:"
                       lastReplyContainer.appendChild( newReply )
+                      let region = document.getElementById("list").value;
+                      let experts = await getHTML('js/experts.json',region);
+                      //alert(experts);
+                      console.dir(experts);
+                      for(let item of experts){
+                        console.log("yes");
+                        newReply.innerHTML = "<ul><li>"+item['name']+"</li><li>Tel:"+item['phone_number']+"</li><li>Address:"+item['address']+"</li></ul>"
+                        await lastReplyContainer.appendChild( newReply )
+                              
+                      }
                       flag = new Boolean(false);
                     } else {
                       console.log(flag);

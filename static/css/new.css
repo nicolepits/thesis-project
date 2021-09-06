@@ -116,7 +116,7 @@ hr {
 }
 
 p.msg {
-    outline: 5px solid black;
+    outline: 1px solid black;
     padding: 2px 5px;
     background: #eaeaea;
     border-radius: 5px;
@@ -124,7 +124,9 @@ p.msg {
 }
 
 p.msg.error {
-    background-color: #f00;
+    color: #6d4e3f;
+    background-color: #ffae86;
+    border-color: #6d4e3f6b;
 }
 
 form {

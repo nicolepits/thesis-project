@@ -2,7 +2,7 @@ var express = require('express');
 var app = express();
 var cors = require('cors');
 var fs = require('fs');
-//let multer = require('multer');
+let formidable = require('formidable');
 var session = require('express-session');
 var hash = require('pbkdf2-password')()
 var path = require('path');
@@ -46,17 +46,7 @@ app.use(session({
 
 //Node Config
 app.use(express.json());
-/**
-let storage = multer.diskStorage({
-  destination: function(req,file,callback) {
-    callback(null,'./uploads')
-  },
-  filename: function(req,file,callback) {
-    console.log(file)
-    callback(null,file.fieldname +'-'+Date.now()+path.extname(file.originalname))
-  }
-})
-**/
+
 //Start the server on port 3000
 app.listen(app.port);
 
@@ -89,6 +79,7 @@ function recentType(a, type) { //a:array type:string
 
 /**** ENDPOINTS ****/
 
+
 function err_to_html(err) {
     return '<p class="msg error">' + err + '</p>';
 }
@@ -101,6 +92,7 @@ app.use(function(req, res, next) {
     delete req.session.success;
     delete req.session.status_msg;
     res.locals.message = '';
+    res.locals.error_msg = '';
     res.locals.status_msg = '';
     res.locals.logout = '';
     res.locals.months = 0;
@@ -224,7 +216,8 @@ app.post('/helper', async function(req, res) {
         cho: req.body.cho,
         protein: req.body.protein,
         fat: req.body.fat,
-        energy: req.body.energy
+        energy: req.body.energy,
+        image: req.body.img
     });
     var result = await meal.save(function(err) {
         if (!err) {
@@ -303,6 +296,15 @@ app.post('/signup', async function(req, res) {
         res.redirect('login');
     }
 });
+
+const isFileValid = (file) => {
+  const type = file.type.split("/").pop();
+  const validTypes = ["pdf","csv"];
+  if(validTypes.indexOf(type) == -1){
+    return false;
+  }
+  return true;
+};
 //users
 app.get('/users', user.allUsers); //retrieves all users
 app.get('/user', user.userById); //retrieves user by username
@@ -327,24 +329,44 @@ app.get('/risk-result', function(req, res) {
 app.get('/batch-mode', function(req, res) {
   res.render('batch-mode');
 });
-app.post('/batch-mode', function(req, res) {
-/**
-  let upload = multer({
-    storage:storage,
-    fileFilter:function(req,file,callback){
-      let ext = path.extname(file.originalname)
-      if(ext!=='.csv'){
-        return callback(res.send('Only csv allowed'),null)
-      }
-      callback(null,true)
+app.post('/batch-mode', async function(req, res) {
+ 
+  let form = formidable.IncomingForm();
+ 
+  form.mutiples = false;
+  
+  form.uploadDir = path.join(__dirname,"uploads");
+  
+  console.log(form);
+  //parse
+  
+  _ = await form.parse(req,(err,fields,files)=>{
+    console.log("err = ", err, " files = ", files)
+    if(err){
+      throw 'Error parsing files';
     }
-  }).single('file');
-  upload(req,res,function(err) {
-    console.log("File uploaded successfully");
-  })
+    const file = files.myFile;
 
-**/
-  let objects = csvHandler();
+    //check file if valid
+    const isValid = isFileValid(file);
+
+    //creates a valid name by removing spaces 
+    const fileName =  encodeURIComponent(file.name.replace(/\s/g,'-'))
+    console.log("Filename: "+fileName);
+    if(!isValid){
+      //throws error if file isn't valid
+      res.locals.error_msg = '<br><div class="alert alert-warning">Please choose a .csv file and resubmit.</div>';
+       
+    }
+    try {
+      //stores the file in the directory
+      fs.renameSync(file.path, path.join(form.uploadDir, fileName))
+    } catch (err) {
+      console.log(error)
+    }
+  console.log(form);
+
+  let objects = csvHandler(fileName);
   console.log(objects);
   let csv = ''
   //Loop the array of objects
@@ -372,8 +394,9 @@ app.post('/batch-mode', function(req, res) {
   }
   console.log("Csv out of loop: "+csv);
   //Loop done
-  res.locals.download = "<a href='data:text/plain;charset=utf-8,"+ encodeURIComponent(csv)+"' download='output.csv'>Click Here To Download</a>"
+  res.locals.download = "<a href='data:text/plain;charset=utf-8,"+ encodeURIComponent(csv)+"' download='output.csv'>Download Ready</a>"
   res.render('batch-mode');
+  });
 });
 function getAge(date) {
     var dob = new Date(date);
@@ -1626,8 +1649,8 @@ function getActivityDuration(activity, ee, weight) {
 
 }
 
-function csvHandler() {
-  let data = fs.readFileSync('data.csv', 'utf8');
+function csvHandler(filename) {
+  let data = fs.readFileSync(filename, 'utf8');
 
   //convert and store csv data into a buffer
   bufferString = data.toString();
