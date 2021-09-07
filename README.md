@@ -8,6 +8,7 @@ diabetes_thesis/mongo_exports
 - /static : contains all static content such as css, js, icons, fonts etc
 
 **How to run app**
-1. Run make file using command : $ make
-2. URL: localhost:3000/
+1. Install npm modules
+2. Run make file using command : $ make
+3. URL: localhost:3000/
 
