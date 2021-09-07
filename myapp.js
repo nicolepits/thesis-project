@@ -326,8 +326,18 @@ app.get('/risk-result', function(req, res) {
     res.render('risk-result');
 });
 
-app.get('/batch-mode', function(req, res) {
-  res.render('batch-mode');
+app.get('/template.csv',async function(req, res) {
+  _ = await fs.readFile(__dirname+'/template.csv', (err,data) => {
+    if(err) throw err;
+    res.status(200);
+    res.setHeader('Content-Type', 'text/csv');
+    res.write(data);
+    res.send();
+  });
+});
+
+app.get('/batch-mode',function(req, res) {
+    res.render('batch-mode');
 });
 app.post('/batch-mode', async function(req, res) {
  

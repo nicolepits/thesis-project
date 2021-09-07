@@ -12,7 +12,6 @@ html {
     font-size: 18px;
     margin: 0;
     padding: 0;
-    height: 100%;
 }
 
 body {
@@ -80,6 +79,7 @@ nav#main-menu {
         grid-column: 2 / 2;
         padding-left: 6rem;
         margin-top: 3rem;
+        margin-bottom: 6rem;
     }
 }
 
@@ -190,6 +190,7 @@ td {
     padding: 10px;
     text-align: left;
     table-layout: auto;
+    max-width: 66ch;
 }
 
 
@@ -199,6 +200,7 @@ td {
     margin-bottom: 1rem;
     border: 1px solid transparent;
     border-radius: 0.25rem;
+    max-width: 66ch;
 }
 
 .alert-success {

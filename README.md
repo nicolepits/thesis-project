@@ -1,22 +1,13 @@
-## Export meals to `json`
+**MongoDB database exports:**
+diabetes_thesis/mongo_exports
 
-```js
-var meals = await Meals.find({}, function (err, ret) {
-    return ret;
-});
-console.log("\n\n");
-console.log(JSON.stringify(meals));
-console.log("\n\n");
-```
+**Notes**
+- myapp.js : main code
+- /models/user.js : mongo models
+- /views : contains .ejs templates (html pages)
+- /static : contains all static content such as css, js, icons, fonts etc
 
-and run:
+**How to run app**
+1. Run make file using command : $ make
+2. URL: localhost:3000/
 
-```shell
-make > output_file.json
-```
-
-pretty print:
-
-```shell
-python3 -m json.tool < output_file.json > output_file_pretty.json
-```
