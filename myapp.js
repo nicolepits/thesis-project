@@ -1011,7 +1011,14 @@ app.post('/meal-plans', async function(req, res) {
 
     state.values.answer = data.answer == 'Yes';
     if (state.values.answer) {
-        state.values.allergy = data.allergies;
+        if(Array.isArray(data.allergies)){
+          state.values.allergy = [];
+          for(let i=0; i<data.allergies.length; i++){
+            state.values.allergy.push(data.allergies[i]);
+            }
+        } else {
+          state.values.allergy = data.allergies;
+        }
     } else {
         state.values.allergy = null;
     }
@@ -1150,13 +1157,22 @@ app.post('/meal-plans', async function(req, res) {
         for (let i = 0; i < breakfasts.length; i++) {
             var flag = true;
             console.log(breakfasts[i])
-            for (let j = 0; j < user.values.allergy.length; j++) {
-                if (flag && (breakfasts[i].category).includes(user.values.allergy[j].value)) {
-                    flag = true;
-                } else {
-                    flag = false;
-                }
-                console.log(user.values.allergy[j]);
+            if(Array.isArray(user.values.allergy)){
+              console.log(user.values.allergy);
+              for (let j = 0; j < user.values.allergy.length; j++) {
+                  if (flag && (breakfasts[i].category).includes(user.values.allergy[j])) {
+                      flag = true;
+                  } else {
+                      flag = false;
+                  }
+                  console.log(user.values.allergy[j]);
+              }
+            } else {
+              if( (breakfasts[i].category).includes(user.values.allergy)){
+                flag = true;
+              } else {
+                flag = false;
+              }
             }
             if (flag) {
                 array.push(breakfasts[i]);
@@ -1181,13 +1197,24 @@ app.post('/meal-plans', async function(req, res) {
         var array = [];
         for (let i = 0; i < lunches.length; i++) {
             var flag = true;
-            for (let j = 0; j < user.values.allergy.length; j++) {
-                if (flag && (lunches[i].category).includes(user.values.allergy[j])) {
-                    flag = true;
-                } else {
-                    flag = false;
-                }
+            if(Array.isArray(user.values.allergy)){
+              console.log(user.values.allergy);
+              for (let j = 0; j < user.values.allergy.length; j++) {
+                  if (flag && (lunches[i].category).includes(user.values.allergy[j])) {
+                      flag = true;
+                  } else {
+                      flag = false;
+                  }
+                  console.log(user.values.allergy[j]);
+              }
+            } else {
+              if( (lunches[i].category).includes(user.values.allergy)){
+                flag = true;
+              } else {
+                flag = false;
+              }
             }
+
             if (flag) {
                 array.push(lunches[i]);
             }
@@ -1209,13 +1236,25 @@ app.post('/meal-plans', async function(req, res) {
         var array = [];
         for (let i = 0; i < dinners.length; i++) {
             var flag = true;
-            for (let j = 0; j < user.values.allergy.length; j++) {
-                if (flag && (dinners[i].category).includes(user.values.allergy[j])) {
-                    flag = true;
-                } else {
-                    flag = false;
-                }
+            if(Array.isArray(user.values.allergy)){
+              console.log(user.values.allergy);
+              for (let j = 0; j < user.values.allergy.length; j++) {
+                  if (flag && (dinners[i].category).includes(user.values.allergy[j])) {
+                      flag = true;
+                  } else {
+                      flag = false;
+                  }
+                  console.log(user.values.allergy[j]);
+              }
+            } else {
+              if( (dinners[i].category).includes(user.values.allergy)){
+                flag = true;
+              } else {
+                flag = false;
+              }
             }
+
+          
             if (flag) {
                 array.push(dinners[i]);
             }
@@ -1236,14 +1275,25 @@ app.post('/meal-plans', async function(req, res) {
         var array = [];
         for (let i = 0; i < teas.length; i++) {
             var flag = true;
-            for (let j = 0; j < user.values.allergy.length; j++) {
-                if (flag && (teas[i].category).includes(user.values.allergy[j])) {
-                    flag = true;
-                } else {
-                    flag = false;
-                }
+            if(Array.isArray(user.values.allergy)){
+              console.log(user.values.allergy);
+              for (let j = 0; j < user.values.allergy.length; j++) {
+                  if (flag && (teas[i].category).includes(user.values.allergy[j])) {
+                      flag = true;
+                  } else {
+                      flag = false;
+                  }
+                  console.log(user.values.allergy[j]);
+              }
+            } else {
+              if( (teas[i].category).includes(user.values.allergy)){
+                flag = true;
+              } else {
+                flag = false;
+              }
             }
-            if (flag) {
+
+           if (flag) {
                 array.push(teas[i]);
             }
         }
