@@ -122,7 +122,7 @@ function authenticate(username, pass, fn) {
     // found the user
 
     User.findOne({ "credentials.username": username }, function(err, user) {
-      if(err){
+      if(user){
         console.log(err);
         hash({ password: pass, salt: user['credentials'].salt }, function (err, pass, salt, hash) {
           if (err) return fn(err);
@@ -760,16 +760,17 @@ app.get('/personalized-rec', async function(req, res) {
     res.locals.birth = null;
     res.locals.ethnicity = null;
 
-console.log(initial_values);
-    if (initial_values.height && initial_values.weight) {
-        res.locals.height = initial_values.height.value;
-        res.locals.height_date = initial_values.height.timestamp.toLocaleDateString();
-        res.locals.weight = initial_values.weight.value;
-        res.locals.weight_date = initial_values.weight.timestamp.toLocaleDateString();
-        res.locals.sex = initial_values.sex;
-        // input type="date" needs an ISO string YYYY-MM-DD but toISOString() returns time as well, so get only the first 10 characters
-        res.locals.birth = initial_values.birth.toISOString().slice(0, 10);
-        res.locals.ethnicity = initial_values.ethnicity;
+    if(initial_values){
+      if (initial_values.height && initial_values.weight) {
+          res.locals.height = initial_values.height.value;
+          res.locals.height_date = initial_values.height.timestamp.toLocaleDateString();
+          res.locals.weight = initial_values.weight.value;
+          res.locals.weight_date = initial_values.weight.timestamp.toLocaleDateString();
+          res.locals.sex = initial_values.sex;
+          // input type="date" needs an ISO string YYYY-MM-DD but toISOString() returns time as well, so get only the first 10 characters
+          res.locals.birth = initial_values.birth.toISOString().slice(0, 10);
+          res.locals.ethnicity = initial_values.ethnicity;
+      }
     }
 
     console.log("sex", res.locals.sex);
@@ -1150,7 +1151,7 @@ app.post('/meal-plans', async function(req, res) {
             var flag = true;
             console.log(breakfasts[i])
             for (let j = 0; j < user.values.allergy.length; j++) {
-                if (flag && (breakfasts[i].category).includes(user.values.allergy[j])) {
+                if (flag && (breakfasts[i].category).includes(user.values.allergy[j].value)) {
                     flag = true;
                 } else {
                     flag = false;
