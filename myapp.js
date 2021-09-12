@@ -121,29 +121,18 @@ function authenticate(username, pass, fn) {
     // the hash against the pass / salt, if there is a match we
     // found the user
 
-
-
-    User.findOne({
-        "credentials.username": username
-    }, function(err, user) {
-        if (err) {
-            console.log(err);
-            //return res.send(404, { error: "User could not be found."});
-            return fn(new Error('cannot find user'));
-        } else {
-            if (pass == user.credentials.password) {
-                return fn(null, user);
-            } else {
-                fn(new Error('invalid password'));
-            }
-            /*
-               hash({ password: pass, salt: user.salt }, function (err, pass, salt, hash) {
-               if (err) return fn(err);
-               if (hash === user.hash) return fn(null, user)
-               fn(new Error('invalid password'));
-               });
-             */
+    User.findOne({ "credentials.username": username }, function(err, user) {
+      if(err){
+        console.log(err);
+        hash({ password: pass, salt: user['credentials'].salt }, function (err, pass, salt, hash) {
+          if (err) return fn(err);
+          if (hash === user['credentials'].hash) return fn(null, user)
+          fn(new Error('invalid password'));
+        });
+      } else {
+        fn(err);
         }
+            
     });
 }
 
@@ -173,7 +162,7 @@ app.get('/login', function(req, res) {
     res.render('login');
 });
 
-app.post('/login', function(req, res) {
+app.post('/login', async function(req, res) {
     authenticate(req.body.username, req.body.password, function(err, user) {
         if (user) {
             // Regenerate session when signing in
@@ -190,9 +179,7 @@ app.post('/login', function(req, res) {
                 res.redirect('/');
             });
         } else {
-            req.session.error = 'Authentication failed, please check your ' +
-                ' username and password.' +
-                ' (use "tj" and "foobar")';
+            req.session.error = 'False credentials, please try again!';
             res.redirect('/login');
         }
     });
@@ -269,25 +256,31 @@ app.get('/signup', function(req, res) {
     res.render('signup');
 });
 app.post('/signup', async function(req, res) {
-    var user = new User({
-        birth: new Date(),
-        ethnicity: "",
-        sex: "",
-        measurement: [],
-        credentials: {
-            username: req.body.username,
-            password: req.body.password,
-            email: req.body.email
-        }
-    });
+        var result;
+        hash({ password: req.body.password }, async function (err, pass, salt, hash) {
+          if (err) throw err;
+            var user = new User({
+              birth: new Date(),
+              ethnicity: "",
+              sex: "",
+              measurement: [],           // store the salt & hash in db object
+              credentials: {
+                username: req.body.username,
+                email: req.body.email,
+                salt : salt,
+                hash : hash
+              }
+            });
+          result = await user.save(function(err) {
+            if (!err) {
+              return null;
+            } else {
+              return err;
+            }
+          });
 
-    var result = await user.save(function(err) {
-        if (!err) {
-            return null;
-        } else {
-            return err;
-        }
-    });
+        });
+
     console.log("result=", result);
     if (result != null) {
         res.locals.err = result;
@@ -767,7 +760,8 @@ app.get('/personalized-rec', async function(req, res) {
     res.locals.birth = null;
     res.locals.ethnicity = null;
 
-    if (initial_values) {
+console.log(initial_values);
+    if (initial_values.height && initial_values.weight) {
         res.locals.height = initial_values.height.value;
         res.locals.height_date = initial_values.height.timestamp.toLocaleDateString();
         res.locals.weight = initial_values.weight.value;
@@ -1408,36 +1402,6 @@ app.get('/account-info/delete-user', restrict, async function(req, res) {
 });
 
 console.log('Server started on port ' + app.port)
-
-//==================================================/
-
-/*
-   app.get('/', function(req, res){
-   res.redirect('/login');
-
-   });
- */
-
-// dummy database
-
-// when you create a user, generate a salt
-// and hash the password ('foobar' is the pass here)
-
-/*
-   var users = {
-   tj: { name: 'tj' }
-   };
-
-   hash({ password: 'foobar' }, function (err, pass, salt, hash) {
-   if (err) throw err;
-// store the salt & hash in the "db"
-users.tj.salt = salt;
-users.tj.hash = hash;
-});
- */
-
-/*
- */
 
 
 function calcRMR(weight, height, age, sex) {
