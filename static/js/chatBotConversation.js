@@ -6,7 +6,7 @@ var chatBotSendButton           = document.querySelector( ".chatBot .chatForm #s
 var chatBotTextArea             = document.querySelector( ".chatBot .chatForm #chatTextBox" )
 
 // Default values for replies
-var chatBotInitiateMessage      = "Hello! Need a specialist?"
+var chatBotInitiateMessage      = "Hello! How can I help you today?<br>Enter /hint for my services!"
 var chatBotBlankMessageReply    = "Type something!"
 var chatBotReply                = "{{ reply }}"
 
@@ -156,12 +156,18 @@ async function createContainer( typeOfContainer ) {
             newReply.setAttribute( "class" , "reply animateChat accentColor" )
             switch( typeOfContainer ){
                 case "reply"        :
-                    if( inputMessage == "Yes" || inputMessage == "yes"){
+                    if( inputMessage.includes("specialist")){
                       newReply.innerHTML  = "Choose your region. Type 'okay' when done!";
                       lastReplyContainer.appendChild( newReply )
-                      nextReplyContainer.appendChild(newSelectReply)
+                      //create a new container for select element
+                      var selectContainer = document.createElement( "div" )
+                      selectContainer.setAttribute( "class" , "container" )
+                      selectContainer.setAttribute( "id" , "replyContainer" )
+                      chatBotSession.appendChild( selectContainer )
+
+                      selectContainer.appendChild(newSelectReply)
                       flag = new Boolean(true);
-                    } else if( inputMessage == "No" || inputMessage == "no"){
+                    } else if( inputMessage.includes("No") || inputMessage.includes("no") || inputMessage.includes("bye") || inputMessage.includes("Bye") || inputMessage.includes("Goodbye") || inputMessage.includes("goodbye")){
                       newReply.innerHTML = "Understood. Goodbye!"
                       lastReplyContainer.appendChild( newReply )
                     } else if( (inputMessage == "Okay" || inputMessage == "okay") && flag == true) {
@@ -199,6 +205,18 @@ async function createContainer( typeOfContainer ) {
                       newOption.innerHTML = html;
                       newList.appendChild(newOption);
                       flag = new Boolean(false);
+                    } else if(inputMessage.includes("tell me a joke") || inputMessage.includes("Tell me a joke")){
+                        newReply.innerHTML = "Why did the programmer quit his job? <br> Because he didn't get arrays &#128526;" ;
+                        lastReplyContainer.appendChild(newReply)
+                    } else if(inputMessage.includes("/hint") || inputMessage.includes("hint")){
+                        newReply.innerHTML = "You can ask me: <br><ul><li>&#10004;Find me a specialist</li><li>&#10004;Find my BMI</li><li>&#10004;Tell me a joke</li><li>&#10004;How are you?</li></ul>" ;
+                        lastReplyContainer.appendChild(newReply)
+                    } else if(inputMessage.includes("how are you") || inputMessage.includes("How are you")){
+                        newReply.innerHTML = "I am doing good! How about you?" ;
+                        lastReplyContainer.appendChild(newReply)
+                    } else if(inputMessage.includes("bmi") || inputMessage.includes("BMI")){
+                        newReply.innerHTML = "Alright. What is your height in centemeters?" ;
+                        lastReplyContainer.appendChild(newReply)
                     } else {
                       console.log(flag);
                       newReply.innerHTML = "I am sorry, I cannot understand you. Try something else maybe?"
