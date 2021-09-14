@@ -16,8 +16,20 @@ var inputMessage                = ""
 // This helps generate text containers in the chat
 var typeOfContainer             = ""
 
-//Flag
+//Flags
 var flag = new Boolean();
+var wFlag = new Boolean();
+var hFlag = new Boolean();
+var eFlag = new Boolean();
+
+//Trackers
+var bmiStep;
+
+//Measurements
+let height;
+let weight;
+let classif;
+let ethnicity = new Boolean();;
 
 //readFile function
 function readFile(file,region){
@@ -167,7 +179,7 @@ async function createContainer( typeOfContainer ) {
 
                       selectContainer.appendChild(newSelectReply)
                       flag = new Boolean(true);
-                    } else if( inputMessage.includes("No") || inputMessage.includes("no") || inputMessage.includes("bye") || inputMessage.includes("Bye") || inputMessage.includes("Goodbye") || inputMessage.includes("goodbye")){
+                    } else if( inputMessage.toLowerCase() == "no" || inputMessage.toLowerCase().includes("bye") || inputMessage.toLowerCase().includes("goodbye")){
                       newReply.innerHTML = "Understood. Goodbye!"
                       lastReplyContainer.appendChild( newReply )
                     } else if( (inputMessage == "Okay" || inputMessage == "okay") && flag == true) {
@@ -205,7 +217,7 @@ async function createContainer( typeOfContainer ) {
                       newOption.innerHTML = html;
                       newList.appendChild(newOption);
                       flag = new Boolean(false);
-                    } else if(inputMessage.includes("tell me a joke") || inputMessage.includes("Tell me a joke")){
+                    } else if(inputMessage.toLowerCase().includes("tell me a joke")){
                         newReply.innerHTML = "Why did the programmer quit his job? <br> Because he didn't get arrays &#128526;" ;
                         lastReplyContainer.appendChild(newReply)
                     } else if(inputMessage.includes("/hint") || inputMessage.includes("hint")){
@@ -216,7 +228,67 @@ async function createContainer( typeOfContainer ) {
                         lastReplyContainer.appendChild(newReply)
                     } else if(inputMessage.includes("bmi") || inputMessage.includes("BMI")){
                         newReply.innerHTML = "Alright. What is your height in centemeters?" ;
+                        bmiStep = 1;
+                        //hFlag = new Boolean(true);
                         lastReplyContainer.appendChild(newReply)
+                    } else if( bmiStep == 1 && !isNaN(inputMessage) ){
+                      height = parseInt(inputMessage) / 100;
+                      newReply.innerHTML = "What is your weight in kilograms?";
+                      //hFlag = new Boolean(false);
+                      //wFlag = new Boolean(true);
+                      bmiStep++;
+                      lastReplyContainer.appendChild(newReply);
+                    } else if( bmiStep == 2 && !isNaN(inputMessage) ){
+                      newReply.innerHTML = "Are you Asian or non-Asian?";
+                      weight = parseInt(inputMessage); //convert string to int
+                      //wFlag = new Boolean(false);
+                      //eFlag = new Boolean(true);
+                      bmiStep++;
+                    } else if( bmiStep == 3 && (inputMessage.toLowerCase().includes("non","asian") || inputMessage.toLowerCase() == "asian")){
+                      if(inputMessage.toLowerCase().includes("non asian")){
+                        ethnicity = new Boolean(true);
+                      } else {
+                        ethnicity = new Boolean(false);
+                      }
+                      let bmi = (weight / (height * height)).toFixed(2);
+                      if( ethnicity == true ){ //non asian
+                        if( bmi<18.5) {
+                          classif = "underweight";
+                        } else if( bmi>=18.5 && bmi<=24.9 ){
+                          classif = "normal weight";
+                        } else if( bmi>= 25.0 && bmi <=29.9 ){
+                          classif = "overweight";
+                        } else if( bmi>= 30.0 && bmi <=34.9 ){
+                          classif = "obese (class I)"
+                        } else if( bmi>= 35.0 && bmi <=39,9 ){
+                          classif = "obese (class II)";
+                        } else if( bmi>= 40.0){
+                          classif = "obese (class III)";
+                        } else {
+                          newReply.innerHTML = "Something went wrong! Are you sure you gave me valid measurements?";
+                          lastReplyContainer.appendChild(newReply);
+                          break;
+                        }
+                      } else { //asian
+                        if( bmi<18.5) {
+                          classif = "underweight";
+                        } else if( bmi>=18.5 && bmi<=22.9 ){
+                          classif = "normal weight";
+                        } else if( bmi>= 23.0 && bmi <=24.9 ){
+                          classif = "overweight";
+                        } else if( bmi>= 25.00 && bmi <=29.9 ){
+                          classif = "obese (class I)"
+                        } else if( bmi>=30.0 ){
+                          classif = "obese (class II)";
+                        } else {
+                          newReply.innerHTML = "Something went wrong! Are you sure you gave me valid measurements?";
+                          lastReplyContainer.appendChild(newReply);
+                          break;
+                        }
+                      }
+                      newReply.innerHTML = "Your BMI is "+bmi+" and your classification is "+classif+".";
+                      lastReplyContainer.appendChild(newReply);
+                      //wFlag = new Boolean(false);
                     } else {
                       console.log(flag);
                       newReply.innerHTML = "I am sorry, I cannot understand you. Try something else maybe?"
