@@ -6,7 +6,7 @@ var chatBotSendButton           = document.querySelector( ".chatBot .chatForm #s
 var chatBotTextArea             = document.querySelector( ".chatBot .chatForm #chatTextBox" )
 
 // Default values for replies
-var chatBotInitiateMessage      = "Hello! How can I help you today?<br>Enter /hint for my services!"
+var chatBotInitiateMessage      = "Hello! &#128513; How can I help you today?<br>Enter /hint for my services!"
 var chatBotBlankMessageReply    = "Type something!"
 var chatBotReply                = "{{ reply }}"
 
@@ -20,11 +20,11 @@ var typeOfContainer             = ""
 var flag = new Boolean();
 
 //Risk indicators
-const IR_RISK = "is above normal";
-const IR_VRISK = "indicates very high risk";
-const IR_NORM = "is considered normal";
-const HTN_RISK = "indicates risk";
-const HTN_NORM = "is considered normal";
+const IR_RISK = "is above normal &#10060;";
+const IR_VRISK = "indicates very high risk &#9940;";
+const IR_NORM = "is considered normal &#9989;";
+const HTN_RISK = "indicates risk &#10060;";
+const HTN_NORM = "is considered normal &#9989;";
 
 //Step Counters
 var riskStep; 
@@ -314,7 +314,7 @@ async function createContainer( typeOfContainer ) {
                   newReply.setAttribute( "class" , "reply animateChat accentColor" )
                     switch( typeOfContainer ){
                       case "reply"        :
-                        if( inputMessage.includes("specialist")){
+                        if( inputMessage.includes("dietologist")){
                           newReply.innerHTML  = "Choose your region. Type 'okay' when done!";
                           lastReplyContainer.appendChild( newReply )
                             //create a new container for select element
@@ -328,7 +328,7 @@ async function createContainer( typeOfContainer ) {
                         } else if( inputMessage.toLowerCase() == "no" || inputMessage.toLowerCase().includes("bye") || inputMessage.toLowerCase().includes("goodbye")){
                           newReply.innerHTML = "Understood. Goodbye!"
                             lastReplyContainer.appendChild( newReply )
-                        } else if( (inputMessage == "Okay\n" || inputMessage == "okay" || inputMessage.includes("okay\n")) && flag == true) {
+                        } else if( inputMessage.toLowerCase().includes("ok") && flag == true) {
                           newReply.innerHTML = "Here are a few dietologists available in your area:"
                             lastReplyContainer.appendChild( newReply )
                             let region = document.getElementById("list").value;
@@ -367,7 +367,7 @@ async function createContainer( typeOfContainer ) {
                           newReply.innerHTML = "Why did the programmer quit his job? <br> Because he didn't get arrays &#128526;" ;
                           lastReplyContainer.appendChild(newReply)
                         } else if(inputMessage.includes("/hint") || inputMessage.includes("hint")){
-                          newReply.innerHTML = "You can ask me: <br><ul><li>&#10004;Find me a specialist</li><li>&#10004;Calculate HTN and IR risks</li><li>&#10004;Find my BMI</li><li>&#10004;Tell me a joke</li><li>&#10004;How are you?</li></ul>" ;
+                          newReply.innerHTML = "You can ask me: <br><ul><li>&#10004;Find me a dietologist</li><li>&#10004;Calculate Hypertension and Insulin Resistance risks</li><li>&#10004;Find my BMI</li><li>&#10004;Tell me a joke</li><li>&#10004;How are you?</li></ul>" ;
                           lastReplyContainer.appendChild(newReply)
                         } else if(inputMessage.includes("how are you") || inputMessage.includes("How are you")){
                           newReply.innerHTML = "I am doing good! How about you?" ;
@@ -480,6 +480,11 @@ async function createContainer( typeOfContainer ) {
                           newReply.innerHTML = "Thank you, how many hours does your leisure screen time last per day?"
                           lastReplyContainer.appendChild(newReply);
                         } else if( riskStep == 6 && !isNaN(parseFloat(inputMessage))){
+                          if(parseFloat(inputMessage)>24){
+                            newReply.innerHTML = "More than 24 hours per day? &#128558; Let's try again..."
+                            lastReplyContainer.appendChild(newReply);
+                            break; 
+                          }
                           riskStep++;
                           user.leisure = parseFloat(inputMessage); //set user's leisure screen time
                           newReply.innerHTML = "How many sugary portions do you consume per week? (1 portion is 250ml)"
@@ -490,6 +495,11 @@ async function createContainer( typeOfContainer ) {
                           newReply.innerHTML = "How many breakfasts do you have per week?"
                           lastReplyContainer.appendChild(newReply);
                         } else if( riskStep == 8 && !isNaN(parseFloat(inputMessage))){
+                          if(parseFloat(inputMessage)>7){
+                            newReply.innerHTML = "You can't have more than 7 breakfasts per week &#128558;! Let's try again..."
+                            lastReplyContainer.appendChild(newReply);
+                            break;
+                          }
                           riskStep++;
                           user.breakfasts = parseFloat(inputMessage); //set user's number of breakfasts
                           newReply.innerHTML = "How many portions of alcohol do you consume per week?<br>(1 portion = 125mL of wine, 330mL of beer or 40mL of hard Liquor)"
