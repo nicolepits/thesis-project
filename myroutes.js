@@ -17,7 +17,8 @@ const options = {
 
 
 //mongoose.connect('mongodb+srv://dbAdmin:vxehBqI62moHAW9i@cluster0.ow9fl.mongodb.net/diabetes_web?retryWrites=true&w=majority', options)
-mongoose.connect('mongodb://127.0.0.1/diabetes_web?retryWrites=true&w=majority', options)
+//mongoose.connect('mongodb://127.0.0.1/diabetes_web?retryWrites=true&w=majority', options)
+mongoose.connect('mongodb://mongo:27017/diabetes_web?retryWrites=true&w=majority', options)
 
 //Return all users
 exports.allUsers = function(req, res){

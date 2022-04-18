@@ -174,12 +174,17 @@ label {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 1rem;
+    padding-right: 30px;
 }
 
 .columns>div {
 }
 .columns>div>div {
   width: 100%;
+}
+
+.col-md-12{
+	padding-right:30px;
 }
 
 .table,
