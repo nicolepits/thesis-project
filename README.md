@@ -7,15 +7,15 @@ diabetes_thesis/mongo_exports
 - /views : contains .ejs templates (html pages)
 - /static : contains all static content such as css, js, icons, fonts etc
 
-**How to run app**
+**Run app**
 1. Install npm modules
 2. $systemctl start mongod.service
 2. Run make file using command : $ make
 3. URL: localhost:3000/
 
-**Dockerfile**
-$sudo docker build . -t thesis/node-web-app
-$sudo docker-compose up
+**Run Docker**
+- $sudo docker build . -t thesis/node-web-app
+- $sudo docker-compose up
 
 Stop docker-compose: $sudo docker-compose down
 
