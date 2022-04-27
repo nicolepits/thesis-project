@@ -34,6 +34,8 @@ app.use(express.urlencoded({
 
 //Routes
 var user = require('./myroutes');
+var meal = require('./myroutes');
+
 
 //Enable cors
 app.use(cors());
@@ -300,6 +302,7 @@ const isFileValid = (file) => {
 };
 //users
 app.get('/users', user.allUsers); //retrieves all users
+app.get('/db', meal.allMeals); //retrieves all users
 app.get('/user', user.userById); //retrieves user by username
 app.post('/user/add', user.createUser); //creates a user (signup)
 app.put('/user/update/measurement', user.updateMeasurement); //update measurements

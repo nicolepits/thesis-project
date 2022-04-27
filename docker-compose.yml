@@ -14,5 +14,9 @@ services:
              image: mongo
              volumes:
                - ./data:/data/db
+               - ./mongo_init:/docker-entrypoint-initdb.d
+               - ./mongo_exports/:/mongo_exports
+             environment:
+               MONGO_INITDB_DATABASE: diabetes_web
              ports:
                - '27017:27017'

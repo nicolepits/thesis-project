@@ -1,7 +1,7 @@
 var mongoose = require('mongoose')
 const {User} = require('./models/user')
 const {Measures} = require('./models/user')
-
+const {Meals} = require('./models/user')
 //Database
 const options = {
     useNewUrlParser: true,
@@ -25,6 +25,16 @@ exports.allUsers = function(req, res){
     return User.find(function (err, user) {
         if (!err) {
             return res.send(user);
+        } else {
+            return res.send(err);
+        }
+    });
+}
+
+exports.allMeals = function(req, res){
+    return Meals.find(function (err, meal) {
+        if (!err) {
+            return res.send(meal);
         } else {
             return res.send(err);
         }
