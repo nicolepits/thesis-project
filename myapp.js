@@ -103,7 +103,7 @@ app.use(function(req, res, next) {
     if (msg) res.locals.message = '<p class="msg success">' + msg + '</p>';
     if (status_msg) res.locals.status_msg = status_msg;
     if (req.session.user) {
-        req.session.status_msg = 'You are logged in as ' + req.session.user.credentials.username;
+        req.session.status_msg = 'You are logged in as:<br> ' + req.session.user.credentials.username;
         res.locals.logout = '<a href="/logout">Logout</a>';
     } else {
         req.session.status_msg = 'You are not logged in';
@@ -162,6 +162,10 @@ app.get('/logout', function(req, res) {
 
 app.get('/login', function(req, res) {
     res.render('login');
+});
+
+app.get('/meals-error', function(req, res) {
+    res.render('meals-error');
 });
 
 app.post('/login', async function(req, res) {
@@ -729,6 +733,11 @@ app.get('/personalized-rec', async function(req, res) {
     var initial_values = null;
     var data = req.body;
     resetPersonalisedState(req.session);
+    
+    if(req.session.error_msg){
+      req.session.error_msg = res.locals.error_msg;
+    }
+
     if (req.session.user) {
         var username = res.locals.username = req.session.user.credentials.username;
         _ = await User.findOne({
@@ -1072,8 +1081,11 @@ app.post('/meal-plans', async function(req, res) {
     //Estimate energy deficit from weight goal
     var deficit = calcEnergyDeficit(weightRate);
 
+    console.log("Deficit", deficit);
+
     //Calculate EE(Energy Expenditure) and EI(Energy Intake) needed for weight loss using the percentage and cal deficit
     var stringPercentage = getStringPercentage(user.values['percentage']);
+    console.log("percentage", stringPercentage);
     var energy = await Energy.findOne({
         percent: stringPercentage,
         energy_def: deficit
@@ -1081,10 +1093,18 @@ app.post('/meal-plans', async function(req, res) {
         if (!err) {
             return ret;
         } else {
-            console.log("could not find energy", err);
+            //req.session.error_msg = "Something  went wrong, please try filling in your details again."
+            //console.log("could not find energy", err);
+            //res.redirect("/personalized-rec");
             return err;
         }
     });
+
+   // if(energy == null){
+    //    req.session.error_msg = "Something  went wrong, please try filling in your details again."
+    //    res.redirect("/personalized-rec");
+    //    return;
+    //}
 
     //store EE and EI
     user.values['energy_exp'] = energy['energy_exp'];
@@ -1108,9 +1128,16 @@ app.post('/meal-plans', async function(req, res) {
                 return ret;
             } else {
                 console.log("could not find breakfasts", err);
+		//res.render("/meals-error");
                 return err;
             }
         });
+	
+	if(res.locals.breakfasts instanceof mongoose.Error || res.locals.breakfasts.length == 0) {
+		res.redirect("/meals-error");
+		return; 
+	}
+
         res.locals.lunches = await Meals.find({
             calories: mealPlanCal,
             type: "lunch"
@@ -1119,9 +1146,16 @@ app.post('/meal-plans', async function(req, res) {
                 return ret;
             } else {
                 console.log("could not find lunches", err);
+		//res.render("/meals-error");
                 return err;
             }
         });
+
+	if(res.locals.lunches instanceof mongoose.Error || res.locals.lunches.length == 0) {
+		res.redirect("/meals-error");
+		return; 
+	}
+
         res.locals.dinners = await Meals.find({
             calories: mealPlanCal,
             type: "dinner"
@@ -1133,6 +1167,12 @@ app.post('/meal-plans', async function(req, res) {
                 return err;
             }
         });
+
+	if(res.locals.dinners instanceof mongoose.Error || res.locals.dinners.length == 0) {
+		res.redirect("/meals-error");
+		return; 
+	}
+
         res.locals.teas = await Meals.find({
             calories: mealPlanCal,
             type: "tea"
@@ -1144,6 +1184,12 @@ app.post('/meal-plans', async function(req, res) {
                 return err;
             }
         });
+	
+	if(res.locals.teas instanceof mongoose.Error || res.locals.teas.length == 0) {
+		res.redirect("/meals-error");
+		return; 
+	}
+
     } else { //user has an allergy
         var breakfasts = await Meals.find({
             calories: mealPlanCal,
@@ -1185,6 +1231,11 @@ app.post('/meal-plans', async function(req, res) {
 
         res.locals.breakfasts = array;
 
+	if(res.locals.breakfasts.length==0){
+		res.redirect("/meals-error");
+		return;
+	}
+
 
         var lunches = await Meals.find({
             calories: mealPlanCal,
@@ -1225,6 +1276,11 @@ app.post('/meal-plans', async function(req, res) {
 
         res.locals.lunches = array;
 
+	if(res.locals.lunches.length==0){
+		res.redirect("/meals-error");
+		return;
+	}
+
         var dinners = await Meals.find({
             calories: mealPlanCal,
             type: "dinner"
@@ -1264,6 +1320,11 @@ app.post('/meal-plans', async function(req, res) {
         }
         res.locals.dinners = array;
 
+	if(res.locals.dinners.length==0){
+		res.redirect("/meals-error");
+		return;
+	}
+
         var teas = await Meals.find({
             calories: mealPlanCal,
             type: "tea"
@@ -1302,6 +1363,10 @@ app.post('/meal-plans', async function(req, res) {
         }
         res.locals.teas = array;
 
+	if(res.locals.teas.length==0){
+		res.redirect("/meals-error");
+		return;
+	}
     }
 
     res.render('meal-plans');

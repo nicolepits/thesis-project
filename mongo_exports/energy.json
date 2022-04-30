@@ -15,7 +15,7 @@
 {"_id":{"$oid":"60f47922b172b22170092574"},"percent":"40/60","energy_def":1400,"energy_exp":560,"energy_in":840,"__v":0}
 {"_id":{"$oid":"60f47943b172b22170092576"},"percent":"50/50","energy_def":500,"energy_exp":250,"energy_in":250,"__v":0}
 {"_id":{"$oid":"60f4794eb172b22170092578"},"percent":"50/50","energy_def":700,"energy_exp":350,"energy_in":350,"__v":0}
-{"_id":{"$oid":"60f4795ab172b2217009257a"},"percent":"50/50","energy_def":100,"energy_exp":500,"energy_in":500,"__v":0}
+{"_id":{"$oid":"60f4795ab172b2217009257a"},"percent":"50/50","energy_def":1000,"energy_exp":500,"energy_in":500,"__v":0}
 {"_id":{"$oid":"60f4796cb172b2217009257c"},"percent":"50/50","energy_def":1200,"energy_exp":600,"energy_in":600,"__v":0}
 {"_id":{"$oid":"60f47979b172b2217009257e"},"percent":"50/50","energy_def":1400,"energy_exp":700,"energy_in":700,"__v":0}
 {"_id":{"$oid":"60f4798eb172b22170092580"},"percent":"60/40","energy_def":500,"energy_exp":300,"energy_in":200,"__v":0}
@@ -25,7 +25,7 @@
 {"_id":{"$oid":"60f479cbb172b22170092588"},"percent":"60/40","energy_def":1400,"energy_exp":840,"energy_in":560,"__v":0}
 {"_id":{"$oid":"60f479dbb172b2217009258a"},"percent":"70/30","energy_def":500,"energy_exp":350,"energy_in":150,"__v":0}
 {"_id":{"$oid":"60f479e9b172b2217009258c"},"percent":"70/30","energy_def":700,"energy_exp":490,"energy_in":210,"__v":0}
-{"_id":{"$oid":"60f479f8b172b2217009258e"},"percent":"70/30","energy_def":100,"energy_exp":700,"energy_in":300,"__v":0}
+{"_id":{"$oid":"60f479f8b172b2217009258e"},"percent":"70/30","energy_def":1000,"energy_exp":700,"energy_in":300,"__v":0}
 {"_id":{"$oid":"60f47a05b172b22170092590"},"percent":"70/30","energy_def":1200,"energy_exp":840,"energy_in":360,"__v":0}
 {"_id":{"$oid":"60f47a14b172b22170092592"},"percent":"70/30","energy_def":1400,"energy_exp":980,"energy_in":420,"__v":0}
 {"_id":{"$oid":"60f47a27b172b22170092594"},"percent":"80/20","energy_def":500,"energy_exp":400,"energy_in":100,"__v":0}
