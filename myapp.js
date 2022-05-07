@@ -7,6 +7,7 @@ var session = require('express-session');
 var hash = require('pbkdf2-password')()
 var path = require('path');
 var mongoose = require('mongoose');
+
 const {
   User
 } = require('./models/user')
@@ -28,7 +29,6 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // middleware
-//
 app.use(express.urlencoded({
   extended: false
 }))
@@ -53,39 +53,11 @@ app.use(express.json());
 //Start the server on port 3000
 app.listen(app.port);
 
-function recentType(a, type) { //a:array type:string
-
-  if (a == null) {
-    return null;
-  }
-  if (a.length == 0) {
-    return null;
-  }
-  var result = {
-    type: "",
-    metric: "",
-    timestamp: 0
-  };
-
-  for (i = 0; i < a.length; i++) {
-    if (a[i].type == type) {
-      tmp2 = new Date(result.timestamp);
-      let tmp1 = new Date(a[i].timestamp);
-      if (tmp1.getTime() > tmp2.getTime()) {
-        result = a[i];
-      }
-    }
-  }
-  return result;
-}
-
-
-/**** ENDPOINTS ****/
-
-
 function err_to_html(err) {
   return '<p class="msg error">' + err + '</p>';
 }
+
+/**** ENDPOINTS ****/
 
 app.use(function(req, res, next) {
   var err = req.session.error;
@@ -415,6 +387,7 @@ app.post('/batch-mode', async function(req, res) {
     res.render('batch-mode');
   });
 });
+
 function getAge(date) {
   var dob = new Date(date);
   //calculate month difference from current date in time
@@ -1750,6 +1723,7 @@ function getActivityDuration(activity, ee, weight) {
 }
 
 function csvHandler(filename) {
+
   let data = fs.readFileSync(filename, 'utf8');
 
   //convert and store csv data into a buffer
@@ -1757,8 +1731,6 @@ function csvHandler(filename) {
 
   //store data for each individual person in an array index.
   arr = bufferString.split('\n');
-  //console.log(arr);
-
 
   let jsonObj = [];
   let headers = arr[0].split(',');
@@ -1777,6 +1749,7 @@ function csvHandler(filename) {
     We will first calculate the risks for each object in array jsonObj
     Then we will append the risks to another array along with the names 
    ***/
+
   let output = [];
   for(j=1; j< (jsonObj.length - 1); j++){
     //console.log(jsonObj[j]);
@@ -1790,7 +1763,34 @@ function csvHandler(filename) {
     output.push(temp);
 
   }
-  //console.log(output);//<-defined
   return output;
-  //console.log(jsonObj);
 }
+
+//returns the most recent added object of the array
+function recentType(a, type) { //a:array type:string
+
+  if (a == null) {
+    return null;
+  }
+  if (a.length == 0) {
+    return null;
+  }
+  var result = {
+    type: "",
+    metric: "",
+    timestamp: 0
+  };
+
+  for (i = 0; i < a.length; i++) {
+    if (a[i].type == type) {
+      tmp2 = new Date(result.timestamp);
+      let tmp1 = new Date(a[i].timestamp);
+      if (tmp1.getTime() > tmp2.getTime()) {
+        result = a[i];
+      }
+    }
+  }
+  return result;
+}
+
+

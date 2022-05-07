@@ -133,7 +133,7 @@ p.msg.error {
 }
 
 form {
-    width: 800px;
+    width: max-content;
     border: 1.9px;
     border-style: solid;
     border-color: grey;

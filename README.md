@@ -19,5 +19,11 @@ diabetes_thesis/mongo_exports
 
 Stop docker-compose: $sudo docker-compose down
 
+**When JSON export files are updated, It is important to delete the 'data' directory of the source directory before rebuilding docker**
+
+**Clear unused docker image data**: $sudo docker system prune
+
 **Sources**
 <a href="https://github.com/HarshvardhanThosar/ChatBot-UI">Chatbot Base UI<a>
+
+
