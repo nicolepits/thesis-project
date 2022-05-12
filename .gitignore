@@ -3,3 +3,8 @@ node_modules
 *~
 **/.*~
 **/*~
+WiredTiger
+WiredTiger.*
+*.lock
+*.wt
+storage.bson
