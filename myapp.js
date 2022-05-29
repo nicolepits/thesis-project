@@ -1574,7 +1574,7 @@ function calcPAL(occupation, sex) {
     } else {
       pal = 1.5;
     }
-  } else if (occupation.match(/^(farm|otherHelp|laborerConstr|agricult|cleaning|constrTrade|freight|farmOp|textile|machine|waitress|otherMech|motor)$/)) {
+  } else if (occupation.match(/^(farm|otherHelp|constrLaborer|agricult|cleaning|constrTrade|freight|farmOp|textile|machine|waitress|otherMech|motor)$/)) {
     if (sex == 'male') {
       pal = 1.7;
     } else {
