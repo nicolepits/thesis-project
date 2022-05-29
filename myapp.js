@@ -1118,6 +1118,8 @@ app.post('/meal-plans', async function(req, res) {
       return; 
     }
 
+    res.locals.breakfasts.sort((a,b) => a.name.localeCompare(b.name));
+
     res.locals.lunches = await Meals.find({
       calories: mealPlanCal,
       type: "lunch"
@@ -1136,6 +1138,8 @@ app.post('/meal-plans', async function(req, res) {
       return; 
     }
 
+    res.locals.lunches.sort((a,b) => a.name.localeCompare(b.name));
+
     res.locals.dinners = await Meals.find({
       calories: mealPlanCal,
       type: "dinner"
@@ -1153,6 +1157,8 @@ app.post('/meal-plans', async function(req, res) {
       return; 
     }
 
+    res.locals.dinners.sort((a,b) => a.name.localeCompare(b.name));
+
     res.locals.teas = await Meals.find({
       calories: mealPlanCal,
       type: "tea"
@@ -1169,6 +1175,8 @@ app.post('/meal-plans', async function(req, res) {
       res.redirect("/meals-error");
       return; 
     }
+
+    res.locals.teas.sort((a,b) => a.name.localeCompare(b.name));
 
   } else { //user has an allergy
     var breakfasts = await Meals.find({
@@ -1216,6 +1224,7 @@ app.post('/meal-plans', async function(req, res) {
       return;
     }
 
+    res.locals.breakfasts.sort((a,b) => a.name.localeCompare(b.name));
 
     var lunches = await Meals.find({
       calories: mealPlanCal,
@@ -1261,6 +1270,8 @@ app.post('/meal-plans', async function(req, res) {
       return;
     }
 
+    res.locals.lunches.sort((a,b) => a.name.localeCompare(b.name));
+
     var dinners = await Meals.find({
       calories: mealPlanCal,
       type: "dinner"
@@ -1305,6 +1316,8 @@ app.post('/meal-plans', async function(req, res) {
       return;
     }
 
+    res.locals.dinners.sort((a,b) => a.name.localeCompare(b.name));
+
     var teas = await Meals.find({
       calories: mealPlanCal,
       type: "tea"
@@ -1347,6 +1360,9 @@ app.post('/meal-plans', async function(req, res) {
       res.redirect("/meals-error");
       return;
     }
+
+    res.locals.teas.sort((a,b) => a.name.localeCompare(b.name));
+
   }
 
   res.render('meal-plans');
@@ -1620,7 +1636,7 @@ function calcMETActiv(activity) {
   var met;
   if (['bowling', 'archery', 'billiards', 'darts', 'golf', 'frisbee', 'yoga'].includes(activity)) {
     met = 2.5;
-  } else if (['ballet', 'bicycleLight', 'canoeLight', 'cricket', 'horse', 'sBallOff', 'surf', 'volley', 'walkLight', 'dog', 'weighLight'].includes(activity)) {
+  } else if (['ballet', 'bicycleLight', 'canoeLight', 'cricket', 'horse', 'sBallOff', 'surf', 'volley', 'walkLight', 'walkingDog', 'weighLight'].includes(activity)) {
     met = 4.0;
   } else if (['aerobic', 'basketball', 'bicycleMod', 'canoeMod', 'jogMod', 'kayak', 'netball', 'skiiLight', 'soccer', 'sBallPitch', 'swimLight', 'tennis', 'weighVig'].includes(activity)) {
     met = 6.0;
@@ -1711,11 +1727,11 @@ function getMealPlanCalories(userCal) {
 function getActivityDuration(activity, ee, weight) {
 
   if (['bowling', 'archery', 'billiards', 'darts', 'golf', 'frisbee', 'yoga', 'ballet', 'bicycleLight', 'canoeLight', 'cricket', 'horse', 'sBallOff', 'surf', 'volley', 'walkLight', 'dog', 'weighLight'].includes(activity)) {
-    return ((60 * ee) / (4.0 * weight)) * 7;
+    return (((60 * ee) / (4.0 * weight)) * 7).toFixed(1);
   } else if (['aerobic', 'basketball', 'bicycleMod', 'canoeMod', 'jogMod', 'kayak', 'netball', 'skiiLight', 'soccer', 'sBallPitch', 'swimLight', 'tennis', 'weighVig'].includes(activity)) {
-    return ((60 * ee) / (6.0 * weight)) * 7;;
+    return (((60 * ee) / (6.0 * weight)) * 7).toFixed(1);
   } else if (['basket', 'beach', 'boxing', 'hockey', 'netball', 'runMod', 'skiiVig', 'skipping', 'volleyComp', 'bicycleVig', 'canoeVig', 'rugby', 'runVig', 'soccerComp', 'squash', 'swimVig', 'polo'].includes(activity)) {
-    return ((60 * ee) / (8.0 * weight)) * 7;
+    return (((60 * ee) / (8.0 * weight)) * 7).toFixed(1);
   } else {
     throw 'error in finding PA duration';
   }
