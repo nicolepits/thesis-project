@@ -773,6 +773,12 @@ app.get('/personalized-rec', async function(req, res) {
 
   res.render('personalized-rec');
 });
+
+app.get('/energy-expenditure', function(req, res) {
+  req.session.personalisedState.step -= 1;
+  res.render('energy-expenditure');
+});
+
 app.post('/energy-expenditure', async function(req, res) {
   res.locals.error_msg = req.session.personalized_error;
   req.session.personalized_error = null;
