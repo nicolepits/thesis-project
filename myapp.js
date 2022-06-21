@@ -276,7 +276,7 @@ app.post('/signup', async function(req, res) {
 });
 
 const isFileValid = (file) => {
-  const type = file.type.split("/").pop();
+  const type = file.mimetype.split("/").pop();
   const validTypes = ["pdf","csv"];
   if(validTypes.indexOf(type) == -1){
     return false;
@@ -320,7 +320,7 @@ app.get('/batch-mode',function(req, res) {
 });
 app.post('/batch-mode', async function(req, res) {
 
-  let form = formidable.IncomingForm();
+  let form = new formidable.IncomingForm();
 
   form.mutiples = false;
 
@@ -340,7 +340,7 @@ app.post('/batch-mode', async function(req, res) {
     const isValid = isFileValid(file);
 
     //creates a valid name by removing spaces 
-    const fileName =  encodeURIComponent(file.name.replace(/\s/g,'-'))
+    const fileName =  encodeURIComponent(file.originalFilename.replace(/\s/g,'-'))
     console.log("Filename: "+fileName);
     if(!isValid){
       //throws error if file isn't valid
@@ -351,7 +351,7 @@ app.post('/batch-mode', async function(req, res) {
       //stores the file in the directory
       fs.renameSync(file.path, path.join(form.uploadDir, fileName))
     } catch (err) {
-      console.log(error)
+      console.log(err)
     }
     console.log(form);
 
@@ -422,8 +422,7 @@ function calculateRisks(data) {
   var physical = parseInt(data.physical);
   var legumes = parseInt(data.legumes);
 
-//  height = height * 0.01; //convert cm to m
-
+  //height = height * 0.01; //convert cm to m
   //evaluate
   var irPoints = 0;
   var htnPoints = 0;
@@ -664,11 +663,11 @@ app.post('/risk-result', async function(req, res) {
     res.locals.history = output;
   }
 
-  const IR_RISK = "is above normal";
-  const IR_VRISK = "indicates very high risk";
-  const IR_NORM = "is considered normal";
-  const HTN_RISK = "indicates risk";
-  const HTN_NORM = "is considered normal";
+  const IR_RISK = "There is an increased risk of having insulin resistance. Insulin resistance is a prognostic indicator for the development of Diabetes Mellitus. To avoid the occurrence of Diabetes mellitus, it is important to increase your physical activity, lose weight and adopt healthy eating habits (Mediterranean diet, eating breakfast, avoiding sugary drinks, etc.). It is advisable to visit your doctor for further testing.";
+  const IR_VRISK = "There is a very high risk of having insulin resistance. For this reason, it is necessary to contact your doctor and dietitian immediately. At the same time, you should modify your diet and physical activity as they will suggest.";
+  const IR_NORM = "There is a small risk of having insulin resistance. Insulin resistance is a prognostic indicator for the occurrence of Diabetes mellitus. However, you should not forget that healthy diet and physical activity should be of great concern to you as they are the best shield in the prevention of diabetes.";
+  const HTN_RISK = "You have an increased risk of having grade 2 or 3 hypertension and you should consult your doctor for advice. It is important to increase your physical activity (at least 30 minutes of moderate-intensity aerobic exercise, 5-7 times / week) and lose excess weight, as obesity is directly linked to the onset of hypertension. It would also be advisable to reduce the consumption of alcoholic beverages and salt. At the same time, you should increase the consumption of legumes, fruits and vegetables.";
+  const HTN_NORM = "You have a low risk of having grade 2 or 3 hypertension. However, you should not forget that healthy diet and physical activity should be of great concern to everyone.";
 
   res.locals.htn = {
     "class": "success",
@@ -684,10 +683,10 @@ app.post('/risk-result', async function(req, res) {
     "message": IR_NORM,
     "score": irPoints.toString(),
   }
-  if (irPoints >= 23 && irPoints <= 30) {
+  if (irPoints >= 23 && irPoints <= 31) {
     res.locals.ir.class = "warning"
     res.locals.ir.message = IR_RISK;
-  } else if (irPoints >= 31) {
+  } else if (irPoints > 31) {
     res.locals.ir.class = "danger";
     res.locals.ir.message = IR_VRISK;
   }
