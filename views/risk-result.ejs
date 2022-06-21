@@ -8,11 +8,13 @@
                 <form>
                     <h2>Hypertension</h2>
                     <div class="alert alert-<%- htn.class %>">
-                        <strong>Your score <%-htn.message%>.</strong> <%- htn.score %> (limit = 26/40).
+                        <!-- <strong><%- htn.score %>.</strong> -->
+                        <%-htn.message%>
                     </div> <br>
                     <h2>Insulin resistance</h2>
                     <div class="alert alert-<%- ir.class %>">
-                        <strong>Your score <%-ir.message%>.</strong> <%- ir.score %>
+                        <!-- <strong><%- ir.score %>.</strong> -->
+                        <%-ir.message%>
                     </div> <br>
                     <h2>Compare with previous scores</h2>
                         <%-history%>
