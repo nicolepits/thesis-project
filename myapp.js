@@ -403,7 +403,7 @@ function getAge(date) {
 
 function bmi(height, weight) {
   //calculate BMI
-  height = height / 100;
+  height = height / 100;  //convert to meters
   var BMI = weight / (height * height);
   return BMI;
 }
@@ -422,12 +422,14 @@ function calculateRisks(data) {
   var physical = parseInt(data.physical);
   var legumes = parseInt(data.legumes);
 
-  height = height * 0.01; //convert cm to m
+//  height = height * 0.01; //convert cm to m
+
   //evaluate
   var irPoints = 0;
   var htnPoints = 0;
   var BMI = bmi(height, weight);
 
+  
   if (BMI < 25) {
     //nothing
   } else if (BMI <= 30) {
@@ -1082,7 +1084,8 @@ app.post('/meal-plans', async function(req, res) {
       //req.session.error_msg = "Something  went wrong, please try filling in your details again."
       //console.log("could not find energy", err);
       //res.redirect("/personalized-rec");
-      return err;
+      throw new Error(err);
+//      return err;
     }
   });
 
