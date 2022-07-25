@@ -1,4 +1,6 @@
 var express = require('express');
+const multer  = require('multer')
+const upload = multer({ dest: 'uploads/' })
 var app = express();
 var cors = require('cors');
 var fs = require('fs');
@@ -318,11 +320,75 @@ app.get('/template.csv',async function(req, res) {
 app.get('/batch-mode',function(req, res) {
   res.render('batch-mode');
 });
+
+
+app.post("/batch-mode", upload.single("myFile"), 
+async function(req, res) {
+    console.log(req.body);
+    console.log(req.file);
+  let uploadDir = path.join(__dirname,"uploads");
+    const file = req.file;
+    console.log("myfile:");
+    console.dir(file);
+
+    //check file if valid
+    const isValid = isFileValid(file);
+    //creates a valid name by removing spaces 
+    const fileName =  encodeURIComponent(file.originalname.replace(/\s/g,'-'))
+  const filepath = path.join(uploadDir, file.filename);
+    console.log("Filename: "+fileName);
+    if(!isValid){
+      //throws error if file isn't valid
+      res.locals.error_msg = '<br><div class="alert alert-warning">Please choose a .csv file and resubmit.</div>';
+
+    }
+    try {
+      //stores the file in the directory
+      fs.renameSync(filepath, path.join(uploadDir, fileName))
+    } catch (err) {
+      console.log(err)
+    }
+
+    let objects = csvHandler( path.join(uploadDir, fileName));
+    console.log(objects);
+    let csv = ''
+    //Loop the array of objects
+    for(let row = 0; row< objects.length; row++){
+      let keysAmount = Object.keys(objects[row]).length
+      let keysCounter = 0;
+
+      //if this is the first row, then generate the headings
+      if(row == 0){
+
+        //Loop each property of the object
+        for(let key in objects[row]){
+          //This is to not add a comma at the last cell
+          //The '\n' adds a new line
+          csv += key + (keysCounter+1 < keysAmount ? ',' : '\r\n' )
+          keysCounter++
+        }
+      } else {
+        for(let key in objects[row]){
+          csv += objects[row][key] + (keysCounter+1 < keysAmount ? ',' : '\r\n' )
+          keysCounter++
+        }
+      }
+      keysCounter = 0;
+    }
+    console.log("Csv out of loop: "+csv);
+    //Loop done
+    res.locals.download = "<a href='data:text/plain;charset=utf-8,"+ encodeURIComponent(csv)+"' download='output.csv'>Download Ready</a>"
+    res.render('batch-mode');
+    //res.json({ message: "Successfully uploaded files" });
+});
+
+
+/*
 app.post('/batch-mode', async function(req, res) {
 
   let form = new formidable.IncomingForm();
 
-  form.mutiples = false;
+  form.multiples = false;
 
   form.uploadDir = path.join(__dirname,"uploads");
 
@@ -331,13 +397,18 @@ app.post('/batch-mode', async function(req, res) {
 
   _ = await form.parse(req,(err,fields,files)=>{
     console.log("err = ", err, " files = ", files)
+    console.log("files");
+    console.dir(files);
     if(err){
       throw 'Error parsing files';
     }
     const file = files.myFile;
+    console.log("myfile:");
+    console.dir(file);
 
     //check file if valid
     const isValid = isFileValid(file);
+  console.log(fs.readFileSync(file, 'utf8'));
 
     //creates a valid name by removing spaces 
     const fileName =  encodeURIComponent(file.originalFilename.replace(/\s/g,'-'))
@@ -349,7 +420,7 @@ app.post('/batch-mode', async function(req, res) {
     }
     try {
       //stores the file in the directory
-      fs.renameSync(file.path, path.join(form.uploadDir, fileName))
+      fs.renameSync(file.filepath, path.join(form.uploadDir, fileName))
     } catch (err) {
       console.log(err)
     }
@@ -387,6 +458,7 @@ app.post('/batch-mode', async function(req, res) {
     res.render('batch-mode');
   });
 });
+*/
 
 function getAge(date) {
   var dob = new Date(date);
@@ -1748,10 +1820,14 @@ function getActivityDuration(activity, ee, weight) {
 
 function csvHandler(filename) {
 
+  console.dir(filename);
   let data = fs.readFileSync(filename, 'utf8');
 
   //convert and store csv data into a buffer
   bufferString = data.toString();
+  console.dir(data);
+  console.log("bufferString");
+  console.dir(bufferString);
 
   //store data for each individual person in an array index.
   arr = bufferString.split('\n');
@@ -1759,7 +1835,7 @@ function csvHandler(filename) {
   let jsonObj = [];
   let headers = arr[0].split(',');
 
-  for (i = 0; i < arr.length; i++) {
+  for (i = 1; i < arr.length; i++) {
     data = arr[i].split(',');
     let obj = {};
     for (let j = 0; j < data.length; j++) {
@@ -1768,15 +1844,15 @@ function csvHandler(filename) {
     jsonObj.push(obj);
   }
 
-  //JSON.stringify(jsonObj);
+  console.dir(JSON.stringify(jsonObj));
   /***
     We will first calculate the risks for each object in array jsonObj
     Then we will append the risks to another array along with the names 
    ***/
 
   let output = [];
-  for(j=1; j< (jsonObj.length - 1); j++){
-    //console.log(jsonObj[j]);
+  for(j=0; j< jsonObj.length; j++){
+    console.log(jsonObj[j]);
     jsonObj[j].birthDate = new Date(jsonObj[j].birthDate);
     let [htnRisk,irRisk] = calculateRisks(jsonObj[j]);
     let temp = {
@@ -1785,7 +1861,6 @@ function csvHandler(filename) {
       htn_risk: htnRisk
     }
     output.push(temp);
-
   }
   return output;
 }
