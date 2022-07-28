@@ -1109,38 +1109,45 @@ app.post('/meal-plans', async function(req, res) {
   var secondHouseMins = user.values['sec-house-mins'];
   var weightRate = user.values['weight-rate'];
 
-  //Estimate RMR
-  var rmr = calcRMR(weight, height, getAge(user.values.birth), user.values.sex);
-  console.log("RMR= ", rmr);
-  //Estimate PAL
-  var pal = calcPAL(user.values.occupations, user.values.sex);
-  console.log("PAL= ", pal);
-  //Estimate MET
-  var metCom = calcMETCom(user.values['walking-effort'], user.values['cycling-effort']);
-  var metFirstAct = calcMETActiv(user.values['leisure-activity-1']);
-  var metSecondAct = calcMETActiv(user.values['leisure-activity-2']);
-  var metFirstHouse = calcMETHouse(user.values['house-hold-work-1']);
-  var metSecondHouse = calcMETHouse(user.values['house-hold-work-2']);
-  console.log("metCOM= ", metCom);
-  console.log("metFirstAct= ", metFirstAct);
-  console.log("metSecondAct= ", metSecondAct);
-  console.log("metFirstHouse= ", metFirstHouse);
-  console.log("metSecondHouse= ", metSecondHouse);
+  try {
+    //Estimate RMR
+    var rmr = calcRMR(weight, height, getAge(user.values.birth), user.values.sex);
+    console.log("RMR= ", rmr);
+    //Estimate PAL
+    var pal = calcPAL(user.values.occupations, user.values.sex);
+    console.log("PAL= ", pal);
+    //Estimate MET
+    var metCom = calcMETCom(user.values['walking-effort'], user.values['cycling-effort']);
+    var metFirstAct = calcMETActiv(user.values['leisure-activity-1']);
+    var metSecondAct = calcMETActiv(user.values['leisure-activity-2']);
+    var metFirstHouse = calcMETHouse(user.values['house-hold-work-1']);
+    var metSecondHouse = calcMETHouse(user.values['house-hold-work-2']);
+    console.log("metCOM= ", metCom);
+    console.log("metFirstAct= ", metFirstAct);
+    console.log("metSecondAct= ", metSecondAct);
+    console.log("metFirstHouse= ", metFirstHouse);
+    console.log("metSecondHouse= ", metSecondHouse);
+    //Estimate Total Energy Expenditure
 
-  //Estimate Total Energy Expenditure
-
-  var tee = calcWeeklyTEE(weight, totalSleepOnWeekdays, totalSleepOnWeekend,
-    totalHoursOfWork, hoursTravel, firstActMins, secondActMins,
-    firstHouseMins, secondHouseMins, rmr, pal, metCom,
-    metFirstAct, metSecondAct, metFirstHouse, metSecondHouse);
-  console.log("TEE", tee);
-  //store mean TEE to state values (daily tee)
-  user.values.tee = tee / 7;
+    var tee = calcWeeklyTEE(weight, totalSleepOnWeekdays, totalSleepOnWeekend,
+      totalHoursOfWork, hoursTravel, firstActMins, secondActMins,
+      firstHouseMins, secondHouseMins, rmr, pal, metCom,
+      metFirstAct, metSecondAct, metFirstHouse, metSecondHouse);
+    console.log("TEE", tee);
+    //store mean TEE to state values (daily tee)
+    user.values.tee = tee / 7;
 
   //Estimate energy deficit from weight goal
   var deficit = calcEnergyDeficit(weightRate);
-
   console.log("Deficit", deficit);
+
+}catch(err){
+  console.error(`[${new Date()}] ${err}`);
+  req.session.error_msg = "Something  went wrong, please try filling in your details again."
+  res.redirect("/personalized-rec");
+  return;
+}
+
 
   //Calculate EE(Energy Expenditure) and EI(Energy Intake) needed for weight loss using the percentage and cal deficit
   var stringPercentage = getStringPercentage(user.values['percentage']);
@@ -1160,11 +1167,12 @@ app.post('/meal-plans', async function(req, res) {
     }
   });
 
-  // if(energy == null){
-  //    req.session.error_msg = "Something  went wrong, please try filling in your details again."
-  //    res.redirect("/personalized-rec");
-  //    return;
-  //}
+   if(energy == null){
+    console.error(`[${new Date()}] Energy object is null. Most likely the DB returned empty objects.`);
+    req.session.error_msg = "Something  went wrong, please try filling in your details again."
+    res.redirect("/personalized-rec");
+    return;
+  }
 
   //store EE and EI
   user.values['energy_exp'] = energy['energy_exp'];
@@ -1175,9 +1183,15 @@ app.post('/meal-plans', async function(req, res) {
 
   //calculate user's calories for weight loss
   var userCal = user.values.tee - energy['energy_in'];
-  var mealPlanCal = getMealPlanCalories(userCal);
-
-  console.log("Meal plan calories= ", mealPlanCal);
+  try{
+    var mealPlanCal = getMealPlanCalories(userCal);
+    console.log("Meal plan calories= ", mealPlanCal);
+  } catch(err){
+    console.error(`[${new Date()}] ${err}`);
+    req.session.error_msg = "Something  went wrong, please try filling in your details again."
+    res.redirect("/personalized-rec");
+    return;
+  }
 
   if (user.values.allergy == null) {
     res.locals.breakfasts = await Meals.find({
@@ -1187,7 +1201,7 @@ app.post('/meal-plans', async function(req, res) {
       if (!err) {
         return ret;
       } else {
-        console.log("could not find breakfasts", err);
+        console.error("could not find breakfasts", err);
         //res.render("/meals-error");
         return err;
       }
@@ -1449,14 +1463,21 @@ app.post('/meal-plans', async function(req, res) {
 });
 
 app.post('/output-result-rec', async function(req, res) {
-  var data = req.body;
-  console.log(data);
-  var user = req.session.personalisedState;
+  try{
+    var data = req.body;
+    console.log(data);
+    var user = req.session.personalisedState;
 
-  user.values.breakfast = data['breakfasts'];
-  user.values.lunch = data['lunches'];
-  user.values.dinner = data['dinners'];
-  user.values.tea = data['teas'];
+    user.values.breakfast = data['breakfasts'];
+    user.values.lunch = data['lunches'];
+    user.values.dinner = data['dinners'];
+    user.values.tea = data['teas'];
+  } catch(err){
+    console.error(`[${new Date()}] ${err}`);
+    req.session.error_msg = "Something  went wrong, please try filling in your details again."
+    res.redirect("/personalized-rec");
+    return;  
+  }
 
   res.locals.breakfast = await Meals.findOne({
     _id: user.values.breakfast
@@ -1596,7 +1617,7 @@ app.get('/account-info/delete-user', restrict, async function(req, res) {
   });
 });
 
-console.log('Server started on port ' + app.port)
+console.log(`[${new Date()}] Server started on port ${app.port}`);
 
 
 function calcRMR(weight, height, age, sex) {
@@ -1634,7 +1655,6 @@ function calcEEHousehold(met, weight, totalMinutes) {
 
 
 function calcWeeklyTEE(weight, totalSleepOnWeekdays, totalSleepOnWeekend, totalHoursWork, totalMinutesCommute, minsFirstAct, minsSecAct, minsFirstHouse, minsSecHouse, rmr, pal, metCom, metFirstAct, metSecondAct, metFirstHouse, metSecondHouse) {
-
   var total =
     (totalSleepOnWeekdays * 5 + totalSleepOnWeekend * 2) +
     totalHoursWork +
@@ -1650,6 +1670,8 @@ function calcWeeklyTEE(weight, totalSleepOnWeekdays, totalSleepOnWeekend, totalH
     calcEEActivity(metSecondAct, weight, minsSecAct) +
     calcEEHousehold(metFirstHouse, weight, minsFirstHouse); +
     calcEEHousehold(metSecondHouse, weight, minsSecHouse);
+
+  console.log(`[${new Date()}] total=${total} weight=${weight}, totalSleepOnWeekdays=${totalSleepOnWeekdays}, totalSleepOnWeekend=${totalSleepOnWeekend}, totalHoursWork=${totalHoursWork}, totalMinutesCommute=${totalMinutesCommute}, minsFirstAct=${minsFirstAct}, minsSecAct=${minsSecAct}, minsFirstHouse=${minsFirstHouse}, minsSecHouse=${minsSecHouse}, rmr=${rmr}, pal=${pal}, metCom=${metCom}, metFirstAct=${metFirstAct}, metSecondAct=${metSecondAct}, metFirstHouse=${metFirstHouse}, metSecondHouse=${metSecondHouse}`);
 
   if (total == 168) {
     return base;
@@ -1798,6 +1820,9 @@ function getMealPlanCalories(userCal) {
   } else if (userCal <= 2300) {
     return 2200;
   } else if (userCal <= 2500) {
+    return 2400;
+    //DEBUG!!!! Remove when the formula is fixed. I added it just to save the day!
+  } else if (userCal > 2500) {
     return 2400;
   } else {
     throw 'error in calories'
