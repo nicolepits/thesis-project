@@ -9,6 +9,8 @@ services:
       - "3000:3000"
     links:
       - mongo
+    depends_on:
+      - mongo
   mongo:
     container_name: mongo
     image: mongo:4.4.14-rc0-focal
@@ -18,6 +20,6 @@ services:
       - ./mongo_exports/:/mongo_exports
     environment:
       MONGO_INITDB_DATABASE: diabetes_web
-    restart: "on-failure"
+    restart: always
 volumes:
   db-data:

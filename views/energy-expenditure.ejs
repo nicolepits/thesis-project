@@ -6,9 +6,9 @@
                 <form action="/weight-loss-goal" method="POST">
 
                     <label for="weekday">How many hours do you sleep on weekdays?</label>
-                    <input type="number" id="weekday" name="weekday" value="0" min="1" max="23"><br><br>
+                    <input type="number" id="weekday" name="weekday" value="0" min="1" max="23" step="any"><br><br>
                     <label for="weekend">How many hours do you sleep on weekend days?</label>
-                    <input type="number" id="weekend" name="weekend" value="0" min="1" max="23"><br><br>
+                    <input type="number" id="weekend" name="weekend" value="0" min="1" max="23" step="any"><br><br>
 
                     <label for="occupation">Please select one of the following occupations that best describes your current job:</label>
                     <select name="occupations" id="occupation">
@@ -195,7 +195,25 @@
                     <label for="secActMins">Minutes:</label>
                     <input type="number" id="secActMins" name="second-act-mins" value="0"><br><br>
 
-                    <p>Please select the type and total duration of household activities that you do every week (Please include only activities that you do for more than 30 minutes/week):</p>
+                    <p>Please enter the amount of time spent (in minutes) in household activities on a weekly basis:</p>
+                    <table>
+                        <tr>
+                            <td>Very light household keeping activities such as cooking, dusting, ironing, making bed, washing dishes, watering plants</td>
+                            <td>
+                                <label for="firstHouseMins">Minutes:</label>
+                                <input type="number" id="firstHouseMins" name="first-house-mins" value="0"><br><br>            
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Light household keeping activities such as gardening (planting, trimming, clearing land), mopping, sweeping floor/carpets, vacuuming</td>
+                            <td>
+                                <label for="secHouseMins">Minutes:</label>
+                                <input type="number" id="secHouseMins" name="sec-house-mins" value="0"><br><br>                                
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- <p>Please select the type and total duration of household activities that you do every week (Please include only activities that you do for more than 30 minutes/week):</p>                    
                     <label for="firstHouse">Activity 1:</label>
                     <select name="house-hold-work-1" id="firstHouse">
                         <option value="cooking">Cooking</option>
@@ -222,7 +240,7 @@
                         <option value="mopping">Mopping</option>
                         <option value="sweep">Sweeping floors/carpets</option> <option value="vacuum">Vacuuming</option> </select><br>
                     <label for="secHouseMins">Minutes:</label>
-                    <input type="number" id="secHouseMins" name="sec-house-mins" value="0"><br><br> 
+                    <input type="number" id="secHouseMins" name="sec-house-mins" value="0"><br><br>  -->
                     <div id="buttons">
                     <a href="/personalized-rec" id="previous-anchor">Previous</a>
                     <input type="submit" id="submitData" name="submit-data" value="Next">

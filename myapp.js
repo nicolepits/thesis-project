@@ -864,8 +864,8 @@ app.post('/weight-loss-goal', function(req, res) {
 
   var state = req.session.personalisedState;
 
-  state.values.totalSleepOnWeekdays = parseInt(data["weekday"]);
-  state.values.totalSleepOnWeekend = parseInt(data["weekend"]);
+  state.values.totalSleepOnWeekdays = parseFloat(data["weekday"]);
+  state.values.totalSleepOnWeekend = parseFloat(data["weekend"]);
   state.values.occupations = data.occupations;
   state.values.totalHoursOfWork = parseInt(data["totalHoursOfWork"]);
   state.values.trans = data.trans == 'Yes';
@@ -883,8 +883,8 @@ app.post('/weight-loss-goal', function(req, res) {
   state.values['leisure-activity-2'] = data['leisure-activity-2'];
   state.values['first-act-mins'] = parseInt(data['first-act-mins']);
   state.values['second-act-mins'] = parseInt(data['second-act-mins']);
-  state.values['house-hold-work-1'] = data['house-hold-work-1'];
-  state.values['house-hold-work-2'] = data['house-hold-work-2'];
+//  state.values['house-hold-work-1'] = data['house-hold-work-1'];
+//  state.values['house-hold-work-2'] = data['house-hold-work-2'];
   state.values['first-house-mins'] = parseInt(data['first-house-mins']);
   state.values['sec-house-mins'] = parseInt(data['sec-house-mins']);
   var BMI = bmi(state.values.height, state.values.weight);
@@ -1048,9 +1048,11 @@ app.post('/meal-plans', async function(req, res) {
     var metCom = calcMETCom(user.values['walking-effort'], user.values['cycling-effort']);
     var metFirstAct = calcMETActiv(user.values['leisure-activity-1']);
     var metSecondAct = calcMETActiv(user.values['leisure-activity-2']);
-    var metFirstHouse = calcMETHouse(user.values['house-hold-work-1']);
-    var metSecondHouse = calcMETHouse(user.values['house-hold-work-2']);
-    console.log("metCOM= ", metCom);
+//    var metFirstHouse = calcMETHouse(user.values['house-hold-work-1']);
+//    var metSecondHouse = calcMETHouse(user.values['house-hold-work-2']);
+    var metFirstHouse = 2.5;
+    var metSecondHouse = 4.0;
+console.log("metCOM= ", metCom);
     console.log("metFirstAct= ", metFirstAct);
     console.log("metSecondAct= ", metSecondAct);
     console.log("metFirstHouse= ", metFirstHouse);
@@ -1448,7 +1450,7 @@ app.post('/output-result-rec', async function(req, res) {
     }
   });
   res.locals.activity = data['leisure-activity'];
-  res.locals['activity_mins'] = getActivityDuration(data['leisure-activity'], user.values['energy_exp'], user.values.weight);
+  res.locals['activity_mins'] = parseInt(getActivityDuration(data['leisure-activity'], user.values['energy_exp'], user.values.weight));
 
   /* Reset state after it's not needed anymore. */
   resetPersonalisedState(req.session);
