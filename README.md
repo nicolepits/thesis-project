@@ -1,7 +1,12 @@
+This app was created for my bachelor diploma thesis and contains algorithms/data researched by Harokopio University's Nutrition and Dietetics department.
+
+<h1>Web-based type 2 diabetes risk assessment and personalised recommendation tool</h1>
+A web application that estimates diabetes type 2 risk, and provides personalised meal plans and physical activity duration for weight loss.
+
 **MongoDB database exports:**
 diabetes_thesis/mongo_exports
 
-**Notes**
+**Structure**
 - myapp.js : main code
 - /models/user.js : mongo models
 - /views : contains .ejs templates (html pages)
